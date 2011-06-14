@@ -1,0 +1,1 @@
+User authorization, password reminding, registration and so on seed.
