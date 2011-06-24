@@ -11,7 +11,7 @@
 			<div id="uploaded_image"></div>
 			<?php echo HTML::image($avatar, array('alt' => '', 'id'=>'avatar'))?>
 			<div>
-				<?php echo HTML::anchor('#', __('set/change'), array('id' => 'change_avatar', 'class' => 'button_black'))?>
+				<?php echo HTML::anchor('#', __('change'), array('id' => 'change_avatar', 'class' => 'button_black'))?>
 				<?php echo ($user->has_avatar) ? HTML::anchor(
 					Route::url('user', array('action' => 'delete_avatar')),
 					__('delete'),
@@ -71,7 +71,8 @@
 			<td class="actions">
 				<?php echo HTML::anchor(
 					Route::url('user', array('action' => 'edit', 'lang' => I18n::lang())),
-					__('edit')
+					__('изменить&nbsp;данные'),
+					array('class' => 'button_black')
 				)?>
 			</td>
 		</tr>
@@ -97,18 +98,18 @@
 						__('Change password')
 					)?>
 				</li>
-				<li>
-					<?php echo HTML::anchor(
-						Route::url('user', array('action' => 'blog', 'lang' => I18n::lang())),
-						__('Personal Blog')
-					)?>
-				</li>
-				<li>
-					<?php echo HTML::anchor(
-						Route::url('user', array('action' => 'profile', 'lang' => I18n::lang())),
-						__('Public Profile')
-					)?>
-				</li>
+<!--				<li>-->
+<!--					--><?php //echo HTML::anchor(
+//						Route::url('user', array('action' => 'blog', 'lang' => I18n::lang())),
+//						__('Personal Blog')
+//					)?>
+<!--				</li>-->
+<!--				<li>-->
+<!--					--><?php //echo HTML::anchor(
+//						Route::url('user', array('action' => 'profile', 'lang' => I18n::lang())),
+//						__('Public Profile')
+//					)?>
+<!--				</li>-->
 				<li>
 					<?php echo HTML::anchor(
 						Route::url('enrollment', array('lang' => I18n::lang(), 'action' => 'self')),
