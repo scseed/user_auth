@@ -11,9 +11,13 @@
 <?php endforeach; endif;?>
 <div id="registration">
 	<?php echo Form::open(Request::current())?>
-	<?php echo Form::hidden('user_data',  $post['user'])?>
-	<?php echo Form::hidden('user_data',  $post['user_data'])?>
 	<ul>
+		<li>
+			<div class="form-item">
+				<?php echo Form::label('nickname', __('Никнейм'), array('class' => $classes['nickname']))?>
+				<?php echo Form::input('nickname', $post['nickname'], array('id' => 'nickname'))?>
+			</div>
+		</li>
 		<li><div class="form-item">
 	<?php echo Form::label('last_name', __('Фамилия'), array('class' => $classes['last_name']))?>
 	<?php echo Form::input('last_name', $post['last_name'], array('id' => 'last_name'))?>
@@ -33,9 +37,6 @@
 	<?php echo Form::input('language', $post['language'], array('id' => 'language'))?>
 		</div></li>
 		<li><div class="form-item">
-	<?php echo Form::label('email', __('E-mail'), array('class' => $classes['email']))?>
-	<?php echo Form::input('email', $post['email'], array('id' => 'email', 'title' => __('email_tooltip')))?>
-		</div><div class="form-item">
 	<?php echo Form::label('phone', __('Мобильный'), array('class' => $classes['phone']))?>
 	<?php echo Form::input('phone', $post['phone'], array('id' => 'phone', 'title' => __('phone_tooltip')))?>
 		</div><div class="form-item">
@@ -55,16 +56,14 @@
 	<?php echo Form::label('city', __('Город'), array('class' => $classes['city']))?>
 	<?php echo Form::input('city', $post['city'], array('id' => 'city'))?>
 		</div></li>
-		<li><div class="form-item"><?php echo Form::button(NULL, __('Регистрация'))?></div></li>
+		<li><div class="form-item"><?php echo Form::button(NULL, __('Изменение'))?></div></li>
 	</ul>
 	<?php echo Form::close()?>
 </div>
 
-<?php if($is_partner):?>
 <h3 class="back">
 	<?php echo HTML::anchor(
 		Route::url('user', array('lang' => I18n::lang(), 'action' => 'cabinet')),
 		'&larr; '.__('Вернуться в личный кабинет')
 	)?>
 </h3>
-<?php endif;?>

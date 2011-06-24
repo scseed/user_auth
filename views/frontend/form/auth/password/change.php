@@ -20,3 +20,10 @@
 
 <?php echo Form::close()?>
 </div>
+
+<h3 class="back">
+	<?php echo HTML::anchor(
+		Route::url('user', array('lang' => I18n::lang(), 'action' => 'cabinet')),
+		'&larr; '.__('Вернуться в личный кабинет')
+	)?>
+</h3>

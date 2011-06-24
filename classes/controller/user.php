@@ -1,9 +1,9 @@
 <?php defined('SYSPATH') or die('No direct access allowed.');
 
 /**
- * Template Controller Auth
+ * Template Controller User
  *
- * @package Auth
+ * @package User
  * @author Sergei Gladkovskiy <smgladkovskiy@gmail.com>
  */
-class Controller_Auth extends Controller_Core_Auth {}
+class Controller_User extends Controller_Core_User {}

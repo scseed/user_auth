@@ -1,4 +1,5 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');?>
+<div id="<?php echo ( ! $is_ajax) ? 'form_login_content' : 'form_login'?>">
 <?php echo Form::open(Route::url('auth', array('action' => 'login', 'lang' => I18n::lang()))); ?>
 	<?php if (!empty($errors) AND ! $is_ajax): ?>
 		<h4 class="title"><div class="form-error"><?php echo $errors ?></div></h4>
@@ -34,3 +35,4 @@
 		</div>
 	<?php echo ( ! $is_ajax) ? '</div>' : NULL?>
 <?php echo Form::close(); ?>
+</div>
