@@ -121,6 +121,7 @@
 			<table class="separator">
 				<tr>
 					<td class="line"></td>
+					<td class="actions"></td>
 				</tr>
 			</table>
 			<ul>

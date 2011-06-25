@@ -28,9 +28,9 @@ abstract class Controller_Core_User extends Controller_Template {
 
 		$this->_email = Kohana::config('email');
 
-		StaticCss::instance()
-			->add('/css/auth.css')
-			;
+//		StaticCss::instance()
+//			->add('/css/auth.css')
+//			;
 	}
 
 	/**
@@ -215,9 +215,9 @@ abstract class Controller_Core_User extends Controller_Template {
 			->add('/js/jquery.tooltips.min.js')
 			->add('/js/form.js')
 			;
-		StaticCss::instance()
-			->add('/css/auth.css')
-			;
+//		StaticCss::instance()
+//			->add('/css/auth.css')
+//			;
 
 		$user = Jelly::query('user', Auth::instance()->get_user()->id)->select();
 		$user_data = $user->user_data;
