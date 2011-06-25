@@ -21,6 +21,7 @@
 				<?php echo HTML::image('i/loader.gif', array('alt' => __('Loading...')))?>
 			</span>
 			<span id="progress"></span>
+			<span id="upload_status"></span>
 			<div id="uploaded_image"></div>
 			<div id="thumbnail_form" style="display:none;">
 				<?php echo Form::open(Route::url('ajax', array('controller' => 'image', 'action' => 'save')))?>
