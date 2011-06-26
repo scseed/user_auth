@@ -1,9 +1,9 @@
 <?php defined('SYSPATH') or die('No direct access allowed.');?>
 <?php StaticJs::instance()->add('
-	var make_a_selection = "'.__("You must make a selection first").'";
-	var saving_thumbnail = "'.__('Please wait, saving thumbnail..').'";
-	var uploading_image  = "'.__('Please wait, uploading image...').'";
-	var deleting_image   = "'.__('Please wait, deleting image...').'";
+	var make_a_selection = "'.__('Make a selection first!').'";
+	var saving_thumbnail = "'.__('Saving thumbnail..').'";
+	var uploading_image  = "'.__('Uploading image...').'";
+	var deleting_image   = "'.__('Deleting image...').'";
 	', NULL, 'inline')?>
 <div id="personal_cabinet">
 	<div id="info">
