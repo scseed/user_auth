@@ -21,7 +21,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 
 	/**
 	 * Login routine
-	 * 
+	 *
 	 * @return void
 	 */
 	public function action_login()
@@ -412,7 +412,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 
 	/**
 	 * Отправка письма с ссылкой для подтверждения аккаунта
-	 * 
+	 *
 	 * @throws HTTP_Exception_500
 	 * @param Jelly_Model $user
 	 * @return void
@@ -479,7 +479,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 
 	/**
 	 * Отправка письма со ссылкой для смены пароля
-	 * 
+	 *
 	 * @throws HTTP_Exception_500
 	 * @param Model_User $user
 	 * @return void
@@ -596,7 +596,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 		$user = Jelly::query($hash->object, $hash->object_id)->select();
 		$user->is_active = TRUE;
 		$user->password = $password;
-		$user->add('roles', 1);
+		$user->add('roles', Jelly::query('role')->where('name', '=', 'login')->limit(1)->execute());
 		$user->save();
 
 		$this->_send_registration_emails($user, $password);
