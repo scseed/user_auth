@@ -79,18 +79,33 @@
 		</tr>
 	</table>
 	<div id="additional_info">
-<!--		<dl>-->
+		<dl>
 <!--			<dt>--><?php //echo __('Rating')?><!--:</dt>-->
 <!--			<dd>--><?php //echo $user->rating?><!--</dd>-->
 <!---->
-<!--			<dt>--><?php //echo __('Status')?><!--:</dt>-->
-<!--			<dd>--><?php //echo implode($user->get_roles_descriptions(), ', ')?><!--</dd>-->
-<!--		</dl>-->
-<!--		<table class="separator">-->
-<!--			<tr>-->
-<!--				<td class="line"></td>-->
-<!--			</tr>-->
-<!--		</table>-->
+			<dt><?php echo __('Groups')?>:</dt>
+			<dd>
+			<?php
+			    $count = count($user->roles);
+				$i=0;
+				foreach($user->roles as $role):
+					$role_name = ($role->name != 'login') ? $role->name : 'public';
+			?>
+				<?php echo HTML::anchor(
+					Route::url('profile', array('action' => 'group', 'group' => $role_name)),
+					$role->fullname,
+					array('title' => $role->description)
+				)?>
+				<?php echo ($count > ++$i) ? ', ' : NULL;?>
+			<?php endforeach?>
+			</dd>
+		</dl>
+		<table class="separator">
+			<tr>
+				<td class="line"></td>
+				<td class="actions"></td>
+			</tr>
+		</table>
 		<div id="usefull_links">
 			<ul>
 				<li>
@@ -105,12 +120,12 @@
 //						__('Personal Blog')
 //					)?>
 <!--				</li>-->
-<!--				<li>-->
-<!--					--><?php //echo HTML::anchor(
-//						Route::url('user', array('action' => 'profile', 'lang' => I18n::lang())),
-//						__('Public Profile')
-//					)?>
-<!--				</li>-->
+				<li>
+					<?php echo HTML::anchor(
+						Route::url('profile', array('action' => 'show', 'group' => 'public', 'lang' => I18n::lang(), 'id' => $user->id)),
+						__('Public Profile')
+					)?>
+				</li>
 				<li>
 					<?php echo HTML::anchor(
 						Route::url('enrollment', array('lang' => I18n::lang(), 'action' => 'self')),
