@@ -12,7 +12,7 @@
 			<?php echo HTML::image($avatar, array('alt' => '', 'id'=>'avatar'))?>
 			<div>
 				<?php echo HTML::anchor('#', __('change'), array('id' => 'change_avatar', 'class' => 'button_black'))?>
-				<?php echo ($user->has_avatar) ? HTML::anchor(
+				<?php echo ($profile->has_avatar) ? HTML::anchor(
 					Route::url('user', array('action' => 'delete_avatar')),
 					__('delete'),
 					array('id' => 'delete_avatar', 'class' => 'button_black')) : NULL;?>
@@ -36,11 +36,11 @@
 			</div>
 		</div>
 		<div id="contacts">
-			<h3><?php echo $user->nickname?></h3>
+			<h3><?php echo $profile->nickname?></h3>
 			<dl>
 				<dt><?php echo __('Настоящее имя')?>:</dt>
 				<dd>
-					<?php echo ($user->loaded() AND $user_data)
+					<?php echo ($profile->loaded() AND $user_data)
 						? $user_data->last_name.' '
 						  .$user_data->first_name.' '
 						  .$user_data->patronymic
@@ -86,9 +86,9 @@
 			<dt><?php echo __('Groups')?>:</dt>
 			<dd>
 			<?php
-			    $count = count($user->roles);
+			    $count = count($profile->roles);
 				$i=0;
-				foreach($user->roles as $role):
+				foreach($profile->roles as $role):
 					$role_name = ($role->name != 'login') ? $role->name : 'public';
 			?>
 				<?php echo HTML::anchor(
@@ -122,7 +122,7 @@
 <!--				</li>-->
 				<li>
 					<?php echo HTML::anchor(
-						Route::url('profile', array('action' => 'show', 'group' => 'public', 'lang' => I18n::lang(), 'id' => $user->id)),
+						Route::url('profile', array('action' => 'show', 'group' => 'public', 'lang' => I18n::lang(), 'id' => $profile->id)),
 						__('Public Profile')
 					)?>
 				</li>
@@ -133,7 +133,7 @@
 					)?>
 				</li>
 			</ul>
-			<?php if($user->is_partner):?>
+			<?php if($profile->is_partner):?>
 			<table class="separator">
 				<tr>
 					<td class="line"></td>

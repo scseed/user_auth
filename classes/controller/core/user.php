@@ -35,7 +35,7 @@ abstract class Controller_Core_User extends Controller_Template {
 
 	/**
 	 * User login panel
-	 * 
+	 *
 	 * @return void
 	 */
 	public function action_login_panel()
@@ -114,7 +114,7 @@ abstract class Controller_Core_User extends Controller_Template {
 		;
 		$this->page_title = __('Личный кабинет');
 		$this->template->content = View::factory('frontend/content/user/cabinet')
-			->bind('user', $user)
+			->bind('profile', $user)
 			->bind('user_data', $user_data)
 			->bind('users', $users)
 			->bind('avatar', $avatar)
@@ -144,17 +144,17 @@ abstract class Controller_Core_User extends Controller_Template {
 
 	public function action_profile_request()
 	{
-		
+
 	}
 
 	public function action_profile_confirm()
 	{
-		
+
 	}
 
 	public function action_profile()
 	{
-		
+
 	}
 
 	/**
