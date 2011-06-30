@@ -206,6 +206,8 @@ abstract class Controller_Core_Auth extends Controller_Template {
 		if($this->request->method() === HTTP_Request::POST)
 		{
 			$post = Arr::extract($this->request->post(), array_keys($fields), NULL);
+			$_user_info = array();
+			$_user_data = array();
 			foreach($post as $name => $value)
 			{
 				switch($name)
@@ -236,8 +238,9 @@ abstract class Controller_Core_Auth extends Controller_Template {
 				$_user_data['partner'] = $partner->id;
 			}
 
+
 			$country = Jelly::query('country')->where('name', '=', HTML::chars(trim($post['country'])))->limit(1)->select();
-			if( ! $country->loaded())
+			if($post['country'] AND ! $country->loaded())
 			{
 				$country = Jelly::factory('country');
 			    $country->name = HTML::chars(trim($post['country']));
@@ -253,7 +256,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 			}
 
 			$city = Jelly::query('city')->where('name', '=', HTML::chars(trim($post['city'])))->limit(1)->select();
-			if( ! $city->loaded())
+			if($post['city'] AND ! $city->loaded())
 			{
 				$city = Jelly::factory('city');
 			    $city->name = HTML::chars(trim($post['city']));
@@ -269,7 +272,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 			}
 
 			$language = Jelly::query('language')->where('name', '=', HTML::chars(trim($post['language'])))->limit(1)->select();
-			if( ! $language->loaded())
+			if($post['language'] AND ! $language->loaded())
 			{
 				$language = Jelly::factory('language');
 			    $language->name = HTML::chars(trim($post['language']));
