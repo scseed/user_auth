@@ -122,7 +122,7 @@
 <!--				</li>-->
 				<li>
 					<?php echo HTML::anchor(
-						Route::url('profile', array('action' => 'show', 'group' => 'public', 'lang' => I18n::lang(), 'id' => $profile->id)),
+						Route::url('profile', array('action' => 'show', 'lang' => I18n::lang(), 'id' => $profile->id)),
 						__('Public Profile')
 					)?>
 				</li>
