@@ -55,7 +55,23 @@ abstract class Controller_Ajax_Image_Core extends Controller_Ajax_Template {
 		$this->_max_thumb_width  = 600; // In px
 		$this->_max_avatar_width = 300; // In px
 
-		$this->_avatars_src = 'media/images/avatars/'.$this->_user->id.'/';
+		$user_id = $this->request->param('id');
+
+		if($this->request->action() == 'save' AND $this->request->post('profile_id'))
+			$user_id = $this->request->post('profile_id');
+
+		$user = NULL;
+		if($user_id AND is_object($this->_user) AND $this->_user->has_role('admin'))
+		{
+			$user = (int) $user_id;
+		}
+		else
+		{
+			$user = $this->_user->id;
+		}
+
+
+		$this->_avatars_src = 'media/images/avatars/'.$user.'/';
 		$this->_thumbs_src  = 'media/cache/thumbs/'.Session::instance()->id().'/';
 
 		$avatars_path = DOCROOT . str_replace('/', DIRECTORY_SEPARATOR, $this->_avatars_src);
@@ -188,6 +204,7 @@ abstract class Controller_Ajax_Image_Core extends Controller_Ajax_Template {
 //		$y2 = $this->request->post('y2');
 		$w = $this->request->post('w');
 		$h = $this->request->post('h');
+		$user_id = $this->request->post('profile_id');
 
 		//Scale the image to the thumb_width set above
 		$file_ext             = Session::instance()->get('user_file_ext');
@@ -223,8 +240,17 @@ abstract class Controller_Ajax_Image_Core extends Controller_Ajax_Template {
 
 		try
 		{
-			// Update user `has_avatar` parameter
-			Jelly::query('user', $this->_user->id)->set(array('has_avatar' => TRUE))->update();
+			if($user_id AND is_object($this->_user) AND $this->_user->has_role('admin'))
+			{
+				// Update user `has_avatar` parameter
+				Jelly::query('user', (int) $user_id)->set(array('has_avatar' => TRUE))->update();
+			}
+			else
+			{
+				// Update user `has_avatar` parameter
+				Jelly::query('user', $this->_user->id)->set(array('has_avatar' => TRUE))->update();
+			}
+
 		}
 		catch(Jelly_Validation_Exception $e)
 		{

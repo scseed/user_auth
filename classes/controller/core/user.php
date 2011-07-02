@@ -109,8 +109,7 @@ abstract class Controller_Core_User extends Controller_Template {
 		StaticJs::instance()
 			->add('js/jquery.imgareaselect.min.js')
 			->add('js/jquery.ocupload-1.1.2.js')
-//			->add('js/jquery.ocupload-1.1.2.packed.js')
-			->add('js/user_cabinet.js')
+			->add('js/profile.js')
 		;
 		$this->page_title = __('Личный кабинет');
 		$this->template->content = View::factory('frontend/content/user/cabinet')
