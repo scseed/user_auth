@@ -140,6 +140,7 @@ abstract class Controller_Ajax_Image_Core extends Controller_Ajax_Template {
 		//Everything is ok, so we can upload the image.
 		if ($status === self::SUCCESS)
 		{
+			$file_ext = 'jpg';
 			//this file could now has an unknown file extension (we hope it's one of the ones set above!)
 			$thumb_name  = substr(Session::instance()->id(), 0, 8).'.'.$file_ext;
 			$thumb_image_file = $this->_thumb_image_path.$thumb_name;
@@ -221,12 +222,12 @@ abstract class Controller_Ajax_Image_Core extends Controller_Ajax_Template {
 		if($avatar->width > $this->_max_avatar_width)
 			$avatar->resize($this->_max_avatar_width,$this->_max_avatar_width);
 
-		$avatar->save($large_image_location);
+		$avatar->save($large_image_location, 90);
 
 		// Create thumb for comments
 		$avatar = Image::factory($large_image_location);
 		$avatar->resize(65,65);
-		$avatar->save($this->_large_image_path.'thumb.'.$file_ext);
+		$avatar->save($this->_large_image_path.'thumb.'.$file_ext, 90);
 
 		Session::instance()->delete('user_file_ext');
 		unlink($thumb_image_location);
