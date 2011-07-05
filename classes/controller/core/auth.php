@@ -54,7 +54,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 			if(Auth::instance()->login(
 				$post['email'],
 				$post['password'],
-				! isset($post['remember']) ? TRUE : FALSE))
+				$post['remember']))
 			{
 				$this->request->redirect(Request::initial()->referrer());
 			}
