@@ -20,6 +20,16 @@ abstract class Controller_Core_Auth extends Controller_Template {
 	}
 
 	/**
+	 * Old path redirect
+	 * 
+	 * @return void
+	 */
+	public function action_user()
+	{
+		$this->request->redirect(Route::url('user', array('action' => 'cabinet', 'lang' => I18n::lang())));
+	}
+
+	/**
 	 * Login routine
 	 *
 	 * @return void

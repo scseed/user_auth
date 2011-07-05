@@ -199,7 +199,7 @@ abstract class Controller_Core_User extends Controller_Template {
 			}
 		}
 
-		$this->page_title = __('Личный кабинет').' / '.__('Смена пароля');
+		$this->page_title = __('Смена пароля').' / '.__('Личный кабинет');
 		$this->template->content = View::factory('frontend/form/auth/password/change')
 			->bind('user', $user)
 			->bind('errors', $errors)
