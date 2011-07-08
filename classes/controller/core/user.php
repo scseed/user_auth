@@ -163,7 +163,7 @@ abstract class Controller_Core_User extends Controller_Template {
 	 */
 	public function action_change_password()
 	{
-		$user = Auth::instance()->get_user();
+		$user = $this->_user;
 
 		if( ! $user OR ! $user->loaded())
 		{
@@ -183,8 +183,7 @@ abstract class Controller_Core_User extends Controller_Template {
 			{
 				try
 				{
-					$user = Jelly::factory('user', $user->id)
-					->update_user($this->request->post(), array('password','password_confirm'));
+					$user->update_user($this->request->post(), array('password','password_confirm'));
 				}
 				catch(Jelly_Validation_Exception $e)
 				{
