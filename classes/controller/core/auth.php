@@ -107,28 +107,22 @@ abstract class Controller_Core_Auth extends Controller_Template {
 				$user->save();
 			}
 
-			// генерация нового пароля, чтобы вход был успешным и обновление учётки
-			$new_password = Text::random();
-			$user = Jelly::factory('user', $user->id)
-				 ->update_user(
-					array(
-						'password'         => $new_password,
-						'password_confirm' => $new_password,
-					),
-					array(
-						'password',
-						'password_confirm',
-					)
-				);
-
-			// вход с новым паролем
-			Auth::instance()->login($user->email, $new_password, TRUE);
+			// Форсированный вход
+			Auth::instance()->force_login($user);
 
 			// удаление хэша, дабы устранить повторное использование
 			$hash->delete();
 
 			// редирект на страницу смены пароля
-			$this->request->redirect(Route::url('user', array('action' => 'change_password', 'lang' => I18n::lang())));
+			$this->request->redirect(
+				Route::url(
+					'user',
+					array(
+						'action' => 'change_password',
+						'lang' => I18n::lang()
+					)
+				)
+			);
 		}
 	}
 

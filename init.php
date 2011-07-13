@@ -5,7 +5,8 @@ $langs = Page::instance()->system_langs();
 
 Route::set('auth', '(<lang>/)auth(/<action>(/<is_partner>)(/<hash>))', array(
 	'lang'       => $langs,
-	'is_partner' => '(partner)'
+	'is_partner' => '(partner)',
+	'hash'       => '[0-9a-zA-Z]+'
 ))
 ->defaults(array(
 	'lang'      => I18n::lang(),
