@@ -105,11 +105,11 @@ abstract class Controller_Core_User extends Controller_Template {
 			? 'media/images/avatars/'.$user->id.'/avatar.jpg'
 			: 'i/stubs/avatar_comment.png';
 
-		StaticCss::instance()->add('css/imgareaselect-animated.css');
+		StaticCss::instance()->add('css/imgareaselect-animated.css', NULL, 'modpath');
 		StaticJs::instance()
-			->add('js/jquery.imgareaselect.min.js')
-			->add('js/jquery.ocupload-1.1.2.js')
-			->add('js/profile.js')
+			->add('js/jquery.imgareaselect.min.js', NULL, 'modpath')
+			->add('js/jquery.ocupload-1.1.2.js', NULL, 'modpath')
+			->add('js/profile.js', NULL, 'module')
 		;
 		$this->page_title = __('Личный кабинет');
 		$this->template->content = View::factory('frontend/content/user/cabinet')
