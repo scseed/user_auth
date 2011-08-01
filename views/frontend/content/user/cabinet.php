@@ -114,12 +114,12 @@
 						__('Change password')
 					)?>
 				</li>
-<!--				<li>-->
-<!--					--><?php //echo HTML::anchor(
-//						Route::url('user', array('action' => 'blog', 'lang' => I18n::lang())),
-//						__('Personal Blog')
-//					)?>
-<!--				</li>-->
+				<li>
+					<?php echo HTML::anchor(
+						Route::url('blog', array('category' => 'self', 'lang' => I18n::lang())),
+						__('Personal Blog')
+					)?>
+				</li>
 				<li>
 					<?php echo HTML::anchor(
 						Route::url('profile', array('action' => 'show', 'lang' => I18n::lang(), 'id' => $profile->id)),

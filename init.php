@@ -1,7 +1,13 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-// Load language conf
-$langs = Page::instance()->system_langs();
+$langs = NULL;
+if(class_exists('Page'))
+{
+	/**
+	 * Load language conf
+	 */
+	$langs = Page::instance()->system_langs();
+}
 
 Route::set('auth', '(<lang>/)auth(/<action>(/<is_partner>)(/<hash>))', array(
 	'lang'       => $langs,
