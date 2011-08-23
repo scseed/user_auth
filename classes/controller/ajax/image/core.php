@@ -257,7 +257,7 @@ abstract class Controller_Ajax_Image_Core extends Controller_Ajax_Template {
 		{
 			$response = array(
 				'status' => self::ERROR,
-				'message' => $e->errors('common_validation')
+				'message' => $e->errors('validate')
 			);
 		}
 

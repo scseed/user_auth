@@ -187,7 +187,7 @@ abstract class Controller_Core_User extends Controller_Template {
 				}
 				catch(Jelly_Validation_Exception $e)
 				{
-					$errors = $e->errors('common_validation');
+					$errors = $e->errors('validate');
 					$errors = $errors['_external'];
 				}
 			}
@@ -293,7 +293,7 @@ abstract class Controller_Core_User extends Controller_Template {
 			    }
 			    catch(Jelly_Validation_Exception $e)
 			    {
-				    $error = $e->errors('common_validation');
+				    $error = $e->errors('validate');
 				    $errors['country'] = $error['name'];
 			    }
 			}
@@ -309,7 +309,7 @@ abstract class Controller_Core_User extends Controller_Template {
 			    }
 			    catch(Jelly_Validation_Exception $e)
 			    {
-				    $error = $e->errors('common_validation');
+				    $error = $e->errors('validate');
 				    $errors['city'] = $error['name'];
 			    }
 			}
@@ -325,7 +325,7 @@ abstract class Controller_Core_User extends Controller_Template {
 			    }
 			    catch(Jelly_Validation_Exception $e)
 			    {
-				    $error = $e->errors('common_validation');
+				    $error = $e->errors('validate');
 				    $errors['language'] = $error['name'];
 			    }
 			}
@@ -344,7 +344,7 @@ abstract class Controller_Core_User extends Controller_Template {
 				}
 				catch(Jelly_Validation_Exception $e)
 				{
-					$errors += $e->errors('common_validation');
+					$errors += $e->errors('validate');
 				}
 
 			}
@@ -357,7 +357,7 @@ abstract class Controller_Core_User extends Controller_Template {
 				}
 				catch(Jelly_Validation_Exception $e)
 				{
-					$errors += $e->errors('common_validation');
+					$errors += $e->errors('validate');
 				}
 			}
 
