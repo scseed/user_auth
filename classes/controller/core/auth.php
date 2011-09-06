@@ -21,7 +21,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 
 	/**
 	 * Old path redirect
-	 * 
+	 *
 	 * @return void
 	 */
 	public function action_user()
