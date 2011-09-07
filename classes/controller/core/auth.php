@@ -49,12 +49,10 @@ abstract class Controller_Core_Auth extends Controller_Template {
 		{
 			$post = Arr::extract($this->request->post(), array('email', 'password', 'remember'));
 
-			$post['remember'] = TRUE;
-
 			if(Auth::instance()->login(
 				$post['email'],
 				$post['password'],
-				$post['remember']))
+				TRUE))
 			{
 				$this->request->redirect(Request::initial()->referrer());
 			}
@@ -64,7 +62,8 @@ abstract class Controller_Core_Auth extends Controller_Template {
 			}
 		}
 
-		$this->page_title = __('Авторизация');
+		$this->template->title = __('Авторизация');
+		$this->template->page_title = __('Авторизация');
 		$this->template->content = View::factory('frontend/form/auth/login')
 			->bind('userdata', $post)
 			->bind('is_ajax', $this->_ajax)

@@ -9,18 +9,18 @@
 abstract class Controller_Core_User extends Controller_Template {
 
 	protected $_email = NULL;
+	public $_auth_required = TRUE;
 
 	public function before()
 	{
+		if($this->request->action() == 'login_panel')
+			$this->_auth_required = FALSE;
+
 		parent::before();
 
 		if($this->request->action() == 'login_panel')
 		{
-			if(Auth::instance()->logged_in() AND ! $this->_ajax)
-			{
-				$this->request->redirect(Route::url('default', array('controller' => '', 'action' => '', 'lang' => I18n::lang())));
-			}
-			elseif(Auth::instance()->logged_in() AND $this->_ajax)
+			if(Auth::instance()->logged_in())
 			{
 				$this->request->action('panel');
 			}
@@ -28,7 +28,7 @@ abstract class Controller_Core_User extends Controller_Template {
 
 		$this->_email = Kohana::config('email');
 
-//		StaticCss::instance()
+		//		StaticCss::instance()
 //			->add('/css/auth.css')
 //			;
 	}
@@ -77,10 +77,8 @@ abstract class Controller_Core_User extends Controller_Template {
 	 */
 	public function action_panel()
 	{
-		$user = Jelly::query('user', Auth::instance()->get_user()->id)->select();
-
 		$this->template->content = View::factory('frontend/content/user/panel')
-			->bind('user', $user)
+			->bind('user', $this->_user)
 		;
 	}
 
@@ -198,7 +196,8 @@ abstract class Controller_Core_User extends Controller_Template {
 			}
 		}
 
-		$this->page_title = __('Смена пароля').' / '.__('Личный кабинет');
+		$this->template->title = __('Смена пароля');
+		$this->template->page_title = __('Смена пароля');
 		$this->template->content = View::factory('frontend/form/auth/password/change')
 			->bind('user', $user)
 			->bind('errors', $errors)
