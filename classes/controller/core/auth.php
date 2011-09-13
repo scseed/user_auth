@@ -409,7 +409,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 			}
 		}
 
-		$this->page_title = __('Напоминание пароля');
+		$this->template->title = __('Напоминание пароля');
 		$this->template->content = View::factory('frontend/form/auth/password/remind')
 			->bind('post', $post)
 			->bind('errors', $errors)
