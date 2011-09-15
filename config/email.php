@@ -28,5 +28,5 @@ return array(
 	'options' => NULL,
 
 	'email_registration' => 'registration@somesite.com',
-	'email_noreply' => array('noreply@somesite.com', 'SoemSite.ru'),
+	'email_noreply' => array('noreply@somesite.com', 'SomeSite.ru'),
 );
