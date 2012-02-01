@@ -26,7 +26,7 @@ abstract class Controller_Core_User extends Controller_Template {
 			}
 		}
 
-		$this->_email = Kohana::config('email');
+		$this->_email = Kohana::$config->load('email');
 
 		//		StaticCss::instance()
 //			->add('/css/auth.css')
