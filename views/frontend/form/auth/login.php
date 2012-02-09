@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');?>
 <div id="<?php echo ( ! $is_ajax) ? 'form_login_content' : 'form_login'?>">
-<?php echo Form::open(Route::url('auth', array('action' => 'login', 'lang' => I18n::lang()))); ?>
+<?php echo Form::open(Route::url('auth', array('action' => 'login', 'lang' => $lang))); ?>
 	<?php if (!empty($errors) AND ! $is_ajax): ?>
 		<h4 class="title"><div class="form-error"><?php echo $errors ?></div></h4>
 	<?php endif ?>
@@ -19,7 +19,7 @@
 	<div style="margin: 1em 0">
 		<div class="form-item">
 			<?php echo HTML::anchor(
-				Route::url('auth', array('action' => 'pass_remind', 'lang' => I18n::lang())),
+				Route::url('auth', array('action' => 'pass_remind', 'lang' => $lang)),
 				__('Напомнить пароль'),
 				array('class' => 'button')
 			)?>
@@ -28,7 +28,7 @@
 		<div class="form-item">
 			<?php echo ($is_ajax) ? '&nbsp;|&nbsp;' : NULL?>
 			<?php echo HTML::anchor(
-				Route::url('auth', array('action' => 'registration', 'lang' => I18n::lang())),
+				Route::url('auth', array('action' => 'registration', 'lang' => $lang)),
 				__('Регистрация'),
 				array('class' => 'button')
 			)?>

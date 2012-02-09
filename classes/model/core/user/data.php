@@ -3,8 +3,8 @@
 /**
  * User_data Model for Jelly ORM
  *
- * @author devolonter <devolonter@enerdesign.ru>
- * @copyright (c) 2010 EnerDesign <http://enerdesign.ru>
+ * @package User_Auth
+ * @author  Sergei Gladkovskiy <smgladkovskiy@gmail.com>
  */
 class Model_Core_User_Data extends Jelly_Model {
 
@@ -35,18 +35,7 @@ class Model_Core_User_Data extends Jelly_Model {
 					'allow_null'    => TRUE,
 					'label'         => __('Отчество'),
 				)),
-				'birthdate' => Jelly::field('Timestamp', array(
-					'convert_empty' => TRUE,
-					'allow_null'    => FALSE,
-					'label'         => __('Дата рождения'),
-					'format'        => 'Y-m-d',
-				)),
-				'phone' => Jelly::field('String', array(
-					'convert_empty' => TRUE,
-					'allow_null'    => TRUE,
-					'label'         => __('Телефон'),
-				)),
-				'user' => Jelly::field('HasOne', array(
+				'user' => Jelly::field('BelongsTo', array(
 					'in_form'    => FALSE,
 				)),
 			));

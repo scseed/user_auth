@@ -3,7 +3,7 @@
 /**
  * User Model for Jelly ORM
  *
- * @package Backend
- * @author avis <smgladkovskiy@gmail.com>
+ * @package User_Auth
+ * @author  Sergei Gladkovskiy <smgladkovskiy@gmail.com>
  */
 class Model_User extends Model_Core_User {}

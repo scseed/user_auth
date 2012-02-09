@@ -9,6 +9,7 @@
 abstract class Controller_Core_Auth extends Controller_Template {
 
 	protected $_email = NULL;
+	protected $_auth_required = FALSE;
 
 	public function before()
 	{
@@ -144,226 +145,84 @@ abstract class Controller_Core_Auth extends Controller_Template {
 	 */
 	public function action_registration()
 	{
-		$partner_registration = ($this->request->param('is_partner') == 'partner');
-
-		if($partner_registration)
-		{
-			$partner = Jelly::query('user', Auth::instance()->get_user()->id)->select();
-
-			if( ! $partner OR ! $partner->loaded() OR !$partner->is_partner)
-			{
-				throw new HTTP_Exception_404();
-			}
-		}
-
-		if(Auth::instance()->logged_in() AND ! $partner_registration)
+		if(Auth::instance()->logged_in())
 			$this->request->redirect(Route::url('user', array('action' => 'cabinet', 'lang' => I18n::lang())));
 
-		StaticJs::instance()
-			->add('/js/jquery.maskedinput.min.js')
-			->add('/js/jquery.tooltips.min.js')
-			->add('/js/form.js')
-			;
-//		StaticCss::instance()
-//			->add('/css/auth.css')
-//			;
-
-		$lang       = $this->request->param('lang');
-		$_languages = Jelly::query('language')->select();
-		$_countries = Jelly::query('country')->select();
-		$_cities = Jelly::query('city')->select();
-		foreach($_languages as $item)
-		{
-			$languages[] = $item->name;
-			$languages[$item->name] = $item->id;
-		}
-		foreach($_countries as $item)
-		{
-			$countries[] = $item->name;
-			$countries[$item->name] = $item->id;
-		}
-		foreach($_cities as $item)
-		{
-			$cities[] = $item->name;
-			$cities[$item->name] = $item->id;
-		}
-
-		$errors = array();
-		$fields = $classes = array(
-			'last_name' => NULL,
-			'first_name' => NULL,
-			'patronymic' => NULL,
-			'team' => NULL,
-			'country' => NULL,
-			'city' => NULL,
-			'language' => NULL,
-			'birthdate' => NULL,
-			'phone' => NULL,
-			'vk_id' => __('Отсутствует'),
-			'fb_id' => __('Отсутствует'),
-			'email' => NULL,
-			'user_data' => NULL,
-			'user' => NULL,
+		$errors    = array();
+		$post_user = array();
+		$post_user_data = array();
+		$post      = array(
+			'id'        => NULL,
+			'user'      => array(
+				'email'     => NULL,
+			),
+			'user_data' => array(
+				'last_name'  => NULL,
+				'first_name' => NULL,
+				'patronymic' => NULL,
+			),
 		);
 
 		if($this->request->method() === HTTP_Request::POST)
 		{
-			$post = Arr::extract($this->request->post(), array_keys($fields), NULL);
-			$_user_info = array();
-			$_user_data = array();
-			foreach($post as $name => $value)
+			$session_id = Session::instance()->id();
+			$post_data = Arr::extract($this->request->post(), array_keys($post), NULL);
+			$post_user = Arr::extract(Arr::get($post_data,'user'), array_keys($post['user']));
+			$post_user_data = Arr::extract(Arr::get($post_data,'user_data'), array_keys($post['user_data']));
+
+			if($post_data['id'])
 			{
-				switch($name)
-				{
-					case 'last_name':
-					case 'first_name':
-					case 'patronymic':
-					case 'team':
-					case 'country':
-					case 'city':
-					case 'language':
-					case 'birthdate':
-					case 'phone':
-					case 'vk_id':
-					case 'fb_id':
-						$_user_info[$name] = ($value == 'Отсутствует' OR $value == 'None') ? NULL : $value;
-						break;
-					case 'email':
-					case 'user';
-					case 'user_data';
-						$_user_data[$name] = $value;
-						break;
-				}
+				$user = Jelly::query('user')->where('user_session', '=', md5($post_data['id']))->limit(1)->select();
+			}
+			else
+			{
+				$user = Jelly::factory('user');
 			}
 
-			if($partner_registration)
+//			exit(Debug::vars($user) . View::factory('profiler/stats'));
+
+			$user->set($post_user);
+			$user->user_session = md5($session_id);
+			try
 			{
-				$_user_data['partner'] = $partner->id;
+				$user->save();
+			}
+			catch(Jelly_Validation_Exception $e)
+			{
+				$errors['user'] = $e->errors('validate');
 			}
 
-
-			$country = Jelly::query('country')->where('name', '=', HTML::chars(trim($post['country'])))->limit(1)->select();
-			if($post['country'] AND ! $country->loaded())
-			{
-				$country = Jelly::factory('country');
-			    $country->name = HTML::chars(trim($post['country']));
-			    try
-			    {
-				    $country->save();
-			    }
-			    catch(Jelly_Validation_Exception $e)
-			    {
-				    $error = $e->errors('validate');
-				    $errors['country'] = $error['name'];
-			    }
-			}
-
-			$city = Jelly::query('city')->where('name', '=', HTML::chars(trim($post['city'])))->limit(1)->select();
-			if($post['city'] AND ! $city->loaded())
-			{
-				$city = Jelly::factory('city');
-			    $city->name = HTML::chars(trim($post['city']));
-			    try
-			    {
-				    $city->save();
-			    }
-			    catch(Jelly_Validation_Exception $e)
-			    {
-				    $error = $e->errors('validate');
-				    $errors['city'] = $error['name'];
-			    }
-			}
-
-			$language = Jelly::query('language')->where('name', '=', HTML::chars(trim($post['language'])))->limit(1)->select();
-			if($post['language'] AND ! $language->loaded())
-			{
-				$language = Jelly::factory('language');
-			    $language->name = HTML::chars(trim($post['language']));
-			    try
-			    {
-				    $language->save();
-			    }
-			    catch(Jelly_Validation_Exception $e)
-			    {
-				    $error = $e->errors('validate');
-				    $errors['language'] = $error['name'];
-			    }
-			}
-
-			if( ! $errors)
-			{
-				$_user_info['country'] = $country->id;
-				$_user_info['city'] = $city->id;
-				$_user_info['language'] = $language->id;
-
-				if( ! $post['user_data'])
-				{
-					$user_data = Jelly::factory('user_data');
-					$user_data->set($_user_info);
-					try
-					{
-						$user_data->save();
-						$post['user_data'] = $_user_data['user_data'] = $user_data->id;
-						$_user_data['fullname'] = $user_data->last_name .' '. $user_data->first_name;
-					}
-					catch(Jelly_Validation_Exception $e)
-					{
-						$errors += $e->errors('validate');
-					}
-				}
-			}
-
-			if( ! $errors)
-			{
-				if( ! $post['user'])
-				{
-					$user = Jelly::factory('user');
-					$_user_data['password'] = $_user_data['password_confirm'] = text::random(NULL, 8);
-					$user->set($_user_data);
-					try
-					{
-						$user->save();
-					}
-					catch(Jelly_Validation_Exception $e)
-					{
-						$errors += $e->errors('validate');
-					}
-				}
-			    else
-			    {
-				    $user = Jelly::query('user', (int) $post['user'])->select();
-			    }
-
-			}
+			$post['id'] = $session_id;
 
 		    if( ! $errors)
 			{
+				$user_data = Jelly::factory('user_data');
+				$user_data->set($post_user_data);
+				$user_data->user = $user;
+				try
+				{
+					$user_data->save();
+				}
+				catch(Jelly_Validation_Exception $e)
+				{
+					$errors['user_data'] = $e->errors('validate');
+				}
+			}
+
+			if( ! $errors)
+			{
 				$this->_send_confirmation($user);
 			}
-
-		    $fields = Arr::overwrite($fields, $post);
 		}
 
-		if($errors)
-		{
-			foreach($errors as $name => $text)
-			{
-				$classes[$name] = 'error';
-			}
-		}
+		$post['user'] = Arr::merge($post['user'], $post_user);
+		$post['user_data'] = Arr::merge($post['user_data'], $post_user_data);
 
-		$phone_mask = ($lang == 'ru') ? '+9 (999) 999-99-99'	: '+99999999999';
-		$this->page_title = ($partner_registration) ? __('Регистрация УЗЧП') : __('Регистрация');
+		$this->page_title = __('Регистрация');
 		$this->template->content = View::factory('frontend/form/auth/registration')
-			->bind('post', $fields)
-			->bind('cards', $cards)
-			->bind('languages', $languages)
-			->bind('countries', $countries)
-			->bind('cities', $cities)
-			->bind('classes', $classes)
+			->bind('post', $post)
 			->bind('errors', $errors)
-			->bind('is_partner', $partner->is_partner)
-			->bind('phone_mask', $phone_mask);
+			;
 	}
 
 	/**
@@ -452,28 +311,13 @@ abstract class Controller_Core_Auth extends Controller_Template {
 				TRUE
 			);
 
-			if($user->partner->id)
-			{
-				// Сообщение в CRM
-				$message_crm = View::factory('frontend/content/email/crm/registration_by_partner')
-					->bind('user', $user)
-					->bind('partner', $user->partner)
-				;
-
-				Email::send(
-					$this->_email->email_registration,
-					$this->_email->email_noreply,
-					'Регистрация через партнёра',
-					$message_crm,
-					FALSE
-				);
-			}
+			$user->user_session = NULL;
+			$user->save();
 
 			$this->request->redirect(
-				Route::url('page', array(
-					'lang' => $this->request->param('lang'),
-					'page_alias' => 'registration',
-					'subpages' => ($user->partner->id) ? 'partner/success' : 'success',
+				Route::url('auth', array(
+					'action' => 'message',
+					'hash' => 'reg_success',
 				))
 			);
 		}
@@ -521,10 +365,9 @@ abstract class Controller_Core_Auth extends Controller_Template {
 			);
 
 			$this->request->redirect(
-				Route::url('messages', array(
-					'lang'   => $this->request->param('lang'),
-					'type'   => 'password_remind',
-					'status' => 'send',
+				Route::url('auth', array(
+					'action' => 'message',
+					'hash' => 'password_remind_send',
 				))
 			);
 		}
@@ -551,12 +394,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 				->bind('user', $user)
 			);
 
-		// Сообщение в CRM
-		$message_crm = View::factory('frontend/content/email/crm/auth_confirmation')
-			->bind('user', $user);
-
 		Email::connect();
-
 		Email::send(
 			$user->email,
 			$this->_email->email_noreply,
@@ -565,13 +403,6 @@ abstract class Controller_Core_Auth extends Controller_Template {
 			TRUE
 		);
 
-		Email::send(
-			$this->_email->email_registration,
-			$this->_email->email_noreply,
-			'Регистрация',
-			$message_crm,
-			FALSE
-		);
 	}
 
 	/**
@@ -590,9 +421,8 @@ abstract class Controller_Core_Auth extends Controller_Template {
 	    {
 			$this->request->redirect(
 				Route::url('auth', array(
-
-					'lang' => $this->request->param('lang'),
-					'action' => 'fail',
+					'action' => 'message',
+					'hash' => 'conf_fail',
 				))
 			);
 	    }
@@ -614,10 +444,9 @@ abstract class Controller_Core_Auth extends Controller_Template {
 		}
 
 		$this->request->redirect(
-			Route::url('page', array(
-				'lang' => I18n::lang(),
-				'page_alias' => 'registration',
-				'subpages' => 'confirmed',
+			Route::url('auth', array(
+				'action' => 'message',
+				'hash' => 'reg_confirmed',
 			))
 		);
 	}
@@ -677,26 +506,12 @@ abstract class Controller_Core_Auth extends Controller_Template {
 	    }
 	}
 
-	/**
-	 * Session end fail message
-	 *
-	 * @return void
-	 */
-	public function action_fail()
+	public function action_message()
 	{
-		$this->page_title = __('Время сессии истекло!');
-		$this->template->content = View::factory('frontend/content/auth/fail');
-	}
+		$message = $this->request->param('hash');
 
-	/**
-	 * Registration success message
-	 *
-	 * @return void
-	 */
-	public function action_success()
-	{
-		$this->page_title = __('Регистрация подтверждена!');
-		$this->template->content = View::factory('frontend/content/auth/success');
+		$this->page_title = __($message);
+		$this->template->content = View::factory('frontend/content/auth/'.$message);
 	}
 
 } // End Controller_Core_Auth

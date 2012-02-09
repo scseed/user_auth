@@ -9,13 +9,12 @@ if(class_exists('Page'))
 	$langs = Page::instance()->system_langs();
 }
 
-Route::set('auth', '(<lang>/)auth(/<action>(/<is_partner>)(/<hash>))', array(
+Route::set('auth', '(<lang>/)auth(/<action>(/<hash>))', array(
 	'lang'       => $langs,
-	'is_partner' => '(partner)',
-	'hash'       => '[0-9a-zA-Z]+'
+	'hash'       => '[0-9a-zA-Z_]+'
 ))
 ->defaults(array(
-	'lang'      => I18n::lang(),
+	'lang'       => ($langs) ? I18n::lang() : '',
 	'controller' => 'auth',
 	'action'     => 'user',
 	'is_partner' => NULL
@@ -25,7 +24,7 @@ Route::set('user', '(<lang>/)user(/<action>)', array(
 	'lang'       => $langs,
 ))
 ->defaults(array(
-	'lang'      => I18n::lang(),
+	'lang'       => ($langs) ? I18n::lang() : '',
 	'controller' => 'user',
 	'action'     => 'cabinet',
 ));

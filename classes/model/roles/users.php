@@ -1,10 +1,10 @@
 <?php defined('SYSPATH') or die('No direct access allowed.');
 
 /**
- * users Model for Jelly ORM
+ * Users Roles Model for Jelly ORM
  *
- * @author Sergei Gladkovskiy <smgladkovskiy@gmail.com>
- * @copyrignt
+ * @package User_Auth
+ * @author  Sergei Gladkovskiy <smgladkovskiy@gmail.com>
  */
 class Model_Roles_Users extends Jelly_Model {
 
