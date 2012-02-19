@@ -20,7 +20,7 @@ Route::set('auth', '(<lang>/)auth(/<action>(/<hash>))', array(
 	'is_partner' => NULL
 ));
 
-Route::set('user', '(<lang>/)user(/<action>)', array(
+Route::set('user', '(<lang>/)user(/<action>)(/<id>)', array(
 	'lang'       => $langs,
 ))
 ->defaults(array(

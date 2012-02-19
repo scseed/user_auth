@@ -186,13 +186,13 @@ abstract class Controller_Core_User extends Controller_Template {
 				catch(Jelly_Validation_Exception $e)
 				{
 					$errors = $e->errors('validate');
-					$errors = $errors['_external'];
 				}
 			}
 
 			if( ! $errors)
 			{
-				$message = __('register.password_changed');
+				$message = __('<strong>Отлично!</strong> Пароль успешно изменён!')
+				         .' '. HTML::anchor('', __('Вернуться'));
 			}
 		}
 

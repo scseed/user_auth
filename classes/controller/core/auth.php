@@ -8,16 +8,16 @@
  */
 abstract class Controller_Core_Auth extends Controller_Template {
 
-	protected $_email = NULL;
+	protected $_email         = NULL;
+	protected $_config        = NULL;
 	protected $_auth_required = FALSE;
 
 	public function before()
 	{
 		parent::before();
 
-		$this->_email = Kohana::$config->load('email');
-
-//		StaticCss::instance()->add('/css/auth.css');
+		$this->_email  = Kohana::$config->load('email');
+		$this->_config = Kohana::$config->load('user_auth');
 	}
 
 	/**
@@ -37,23 +37,25 @@ abstract class Controller_Core_Auth extends Controller_Template {
 	 */
 	public function action_login()
 	{
+		$registration = $this->_config->open_registration;
 		if(Auth::instance()->logged_in())
 			$this->request->redirect('');
 
 		$post = array(
-			'email' => NULL,
-			'password' => NULL
+			'email'    => NULL,
+			'password' => NULL,
+			'remember' => FALSE
 		);
 		$errors = NULL;
 
 		if($this->request->method() === HTTP_Request::POST)
 		{
-			$post = Arr::extract($this->request->post(), array('email', 'password', 'remember'));
+			$post_data = Arr::extract($this->request->post(), array_keys($post));
 
 			if(Auth::instance()->login(
-				$post['email'],
-				$post['password'],
-				TRUE))
+				$post_data['email'],
+				$post_data['password'],
+				(bool) $post_data['remember']))
 			{
 				$this->request->redirect(Request::initial()->referrer());
 			}
@@ -61,14 +63,16 @@ abstract class Controller_Core_Auth extends Controller_Template {
 			{
 				$errors = 'Неверное имя пользователя или пароль';
 			}
+
+			$post = Arr::merge($post, $post_data);
 		}
 
-		$this->template->title = __('Авторизация');
+		$this->template->title      = __('Авторизация');
 		$this->template->page_title = __('Авторизация');
-		$this->template->content = View::factory('frontend/form/auth/login')
-			->bind('userdata', $post)
-			->bind('is_ajax', $this->_ajax)
-			->set('errors', $errors)
+		$this->template->content    = View::factory('frontend/form/auth/login')
+			->bind('registration', $registration)
+			->bind('post', $post)
+			->bind('errors', $errors)
 		;
 	}
 
@@ -100,12 +104,12 @@ abstract class Controller_Core_Auth extends Controller_Template {
 		}
 		else
 		{
-			// присваивание login роли, так как старые записи могут не иметь роли для входа на сайт
-			if( ! $user->has_role('login'))
-			{
-				$user->add('roles', Jelly::query('role')->where('name', '=', 'login')->limit(1)->execute());
-				$user->save();
-			}
+//			// присваивание login роли, так как старые записи могут не иметь роли для входа на сайт
+//			if( ! $user->has_role('login'))
+//			{
+//				$user->add('roles', Jelly::query('role')->where('name', '=', 'login')->limit(1)->execute());
+//				$user->save();
+//			}
 
 			// Форсированный вход
 			Auth::instance()->force_login($user);
@@ -119,7 +123,6 @@ abstract class Controller_Core_Auth extends Controller_Template {
 					'user',
 					array(
 						'action' => 'change_password',
-						'lang' => I18n::lang()
 					)
 				)
 			);
@@ -145,6 +148,11 @@ abstract class Controller_Core_Auth extends Controller_Template {
 	 */
 	public function action_registration()
 	{
+		$registration = $this->_config->open_registration;
+
+		if( ! $registration)
+			$this->request->redirect('');
+
 		if(Auth::instance()->logged_in())
 			$this->request->redirect(Route::url('user', array('action' => 'cabinet', 'lang' => I18n::lang())));
 
@@ -359,7 +367,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 			Email::send(
 				$user->email,
 				$this->_email->email_noreply,
-				'Напоминание пароля | danceville.ru',
+				'Напоминание пароля',
 				$message,
 				TRUE
 			);
@@ -398,7 +406,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 		Email::send(
 			$user->email,
 			$this->_email->email_noreply,
-			'Регистрация прошла успешно | DANCEVILLE.ru',
+			'Регистрация прошла успешно',
 			$message_user,
 			TRUE
 		);
