@@ -36,6 +36,7 @@
 					</div>
 				</div>
 			</div>
+			<?php if($can_remember):?>
 			<div class="control-group">
 				<div class="controls">
 					<label class="checkbox">
@@ -49,6 +50,7 @@
 					</label>
 				</div>
 			</div>
+			<?php endif;?>
 			<div class="form-actions">
 				<div class="btn-toolbar">
 					<div class="btn-group">

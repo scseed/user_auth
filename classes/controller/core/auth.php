@@ -73,6 +73,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 			->bind('registration', $registration)
 			->bind('post', $post)
 			->bind('errors', $errors)
+			->set('can_remember', $this->_config->remember_functional)
 		;
 	}
 
