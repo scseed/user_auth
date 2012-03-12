@@ -6,6 +6,6 @@
 		<div class="alert alert-success">
 			Инструкции по смене пароля были высланы на контактный email.
 		</div>
-
-		</div>
+		<?php echo HTML::anchor('/', 'Вернуться')?>
+	</div>
 </div>

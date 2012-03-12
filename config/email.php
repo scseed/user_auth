@@ -27,6 +27,9 @@ return array(
 	 */
 	'options' => NULL,
 
-	'email_registration' => 'registration@somesite.com',
-	'email_noreply' => array('noreply@somesite.com', 'SomeSite.ru'),
+	/**
+	 * Uncomment this lines only in the copy of this confin in your app
+	 */
+//	'email_registration' => 'registration@somesite.com',
+//	'email_noreply' => array('noreply@somesite.com', 'SomeSite.ru'),
 );

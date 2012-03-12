@@ -101,7 +101,12 @@ abstract class Controller_Core_Auth extends Controller_Template {
 
 		if( ! $user->loaded())
 		{
-			throw new HTTP_Exception_404();
+			$this->request->redirect(
+				Route::url('auth', array(
+					'action' => 'message',
+					'hash' => 'hash_expired',
+				))
+			);
 		}
 		else
 		{
