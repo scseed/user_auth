@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');?>
 <div class="row-fluid" style="margin: 5em auto">
 	<div class="span3">&nbsp;</div>
-	<div class="span5">
+	<div class="span6">
 	<?php echo Form::open(Route::url('auth', array('action' => 'login', 'lang' => $lang)), array('class' => 'form-horizontal')); ?>
 		<fieldset>
 			<legend><?php echo __('Авторизуйтесь');?></legend>
