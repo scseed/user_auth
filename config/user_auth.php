@@ -2,4 +2,5 @@
 return array(
 	'open_registration' => TRUE,
 	'remember_functional' => TRUE,
+	'site' => Kohana::$config->load('site'),
 );

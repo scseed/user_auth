@@ -320,7 +320,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 			Email::send(
 				$user->email,
 				$this->_email->email_noreply,
-				'Подтверждения регистрации | danceville.ru',
+				__('Подтверждения регистрации | :site_name', array(':site_name' => $this->_config->site->site_name)),
 				$message,
 				TRUE
 			);

@@ -45,6 +45,8 @@ abstract class Controller_Core_User extends Controller_Template {
 			'password' => NULL
 		);
 		$errors = NULL;
+		$can_remember = TRUE;
+		$registration = TRUE;
 		if($this->request->method() === HTTP_Request::POST)
 		{
 			$post = Arr::extract($this->request()->post(), array('email', 'password', 'remember'));
@@ -65,9 +67,12 @@ abstract class Controller_Core_User extends Controller_Template {
 
 		$this->template->title = __('Вход');
 		$this->template->content = View::factory('frontend/form/auth/login')
-			->bind('userdata', $post)
+			->bind('post', $post)
 			->bind('is_ajax', $this->_ajax)
-			->set('errors', $errors);
+			->set('can_remember', $can_remember)
+			->set('registration', $registration)
+			->set('errors', $errors)
+		;
 	}
 
 	/**
