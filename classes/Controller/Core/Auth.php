@@ -27,7 +27,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 	 */
 	public function action_user()
 	{
-		$this->request->redirect(Route::url('user', array('action' => 'cabinet', 'lang' => I18n::lang())));
+		HTTP::redirect(Route::url('user', array('action' => 'cabinet', 'lang' => I18n::lang())));
 	}
 
 	/**
@@ -57,7 +57,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 				$post_data['password'],
 				(bool) $post_data['remember']))
 			{
-				$this->request->redirect(Request::initial()->referrer());
+				HTTP::redirect(Request::initial()->referrer());
 			}
 			else
 			{
@@ -67,8 +67,9 @@ abstract class Controller_Core_Auth extends Controller_Template {
 			$post = Arr::merge($post, $post_data);
 		}
 
+		$this->template->modals .= View::factory('frontend/modal/auth/remember');
+
 		$this->template->title      = __('Авторизация');
-		$this->template->page_title = __('Авторизация');
 		$this->template->content    = View::factory('frontend/form/auth/login')
 			->bind('registration', $registration)
 			->bind('post', $post)

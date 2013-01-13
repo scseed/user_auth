@@ -16,6 +16,14 @@ Route::set('auth', '(<lang>/)auth(/<action>(/<hash>))', array(
 	'action'     => 'user',
 	'is_partner' => NULL
 ));
+Route::set('auth_ajax', '(<lang>/)auth_ajax/<action>', array(
+	'lang'       => $allowedLangs,
+))
+->defaults(array(
+	'lang'       => $defaultLang,
+	'directory'  => 'ajax',
+	'controller' => 'auth',
+));
 
 Route::set('user', '(<lang>/)user(/<action>)(/<id>)', array(
 	'lang'       => $allowedLangs,
