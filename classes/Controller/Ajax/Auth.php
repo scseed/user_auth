@@ -8,6 +8,54 @@
  */
 class Controller_Ajax_Auth extends Controller_Ajax_Template {
 
+	public function before()
+	{
+		parent::before();
+
+		$this->_email  = Kohana::$config->load('email');
+		$this->_config = Kohana::$config->load('user_auth');
+	}
+
+	/**
+	 * Login routine
+	 *
+	 * @return void
+	 */
+	public function action_login()
+	{
+		if(Auth::instance()->logged_in())
+			HTTP::redirect('');
+
+		$errors   = NULL;
+		$response = array('status' => 0, 'message' => 'request error');
+		$post     = array(
+			'email'    => NULL,
+			'password' => NULL,
+			'remember' => FALSE
+		);
+		$errors = NULL;
+
+		if($this->request->method() === HTTP_Request::POST)
+		{
+			$post_data = Arr::extract($this->request->post(), array_keys($post));
+
+			if(Auth::instance()->login(
+				$post_data['email'],
+				$post_data['password'],
+				(bool) $post_data['remember']))
+			{
+				$response = array('status' => 1);
+			}
+			else
+			{
+				$response = array('status' => 0, 'message' => __('Неверное имя пользователя или пароль'));
+			}
+		}
+
+		$this->response->body(json_encode($response));
+	}
+
+
 	/**
 	 * Напоминание пароля
 	 *

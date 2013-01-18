@@ -90,10 +90,10 @@ abstract class Model_Core_User extends Model_Auth_User {
 		));
 	}
 
-	public function unique_key($value)
-	{
-		return 'email';
-	}
+//	public function unique_key($value)
+//	{
+//		return 'email';
+//	}
 
 	/**
 	 * Password validation for plain passwords.
