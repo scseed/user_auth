@@ -8,14 +8,14 @@ $(document).ready(function(){
 		success: function(response, status){
 			if(response.status == 1)
 			{
-				window.location.reload();
+				window.location.href = response.referrer;
 			}
 			else
 			{
 				var alert_div = '<div class="errors alert alert-error">'
 				+ response.message
 				+ '</div>';
-				loginBlock.find('.modal-body').prepend(alert_div);
+				loginBlock.prepend(alert_div);
 			}
 		}
 	});

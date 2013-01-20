@@ -67,7 +67,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 			$post = Arr::merge($post, $post_data);
 		}
 
-
+		StaticJs::instance()->add_modpath('js/auth.js');
 		$this->template->modals .= View::factory('frontend/modal/auth/remember');
 
 		$this->template->title      = __('Авторизация');
@@ -145,7 +145,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 	public function action_logout()
 	{
 		if(Auth::instance()->logout())
-			$this->request->redirect(Request::initial()->referrer());
+			HTTP::redirect('');
 	}
 
 	/**

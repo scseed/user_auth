@@ -25,7 +25,7 @@ Route::set('auth_ajax', '(<lang>/)auth_ajax/<action>', array(
 	'controller' => 'auth',
 ));
 
-Route::set('user', '(<lang>/)user(/<action>)(/<id>)', array(
+Route::set('user', '(<lang>/)user(/<action>(/<id>))', array(
 	'lang'       => $allowedLangs,
 ))
 ->defaults(array(

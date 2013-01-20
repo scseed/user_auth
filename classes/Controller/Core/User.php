@@ -92,122 +92,49 @@ abstract class Controller_Core_User extends Controller_Template {
 	 *
 	 * @return void
 	 */
-	public function action_cabinet()
+	public function action_mydata()
 	{
-        if( ! Auth::instance()->logged_in())
-            $this->request->redirect(Route::url('default', array('lang' => I18n::lang())));
+		if( ! Auth::instance()->logged_in())
+			HTTP::redirect(Route::url('default', array('lang' => I18n::lang())));
 
 		$user = Jelly::query('user', Auth::instance()->get_user()->id)->select();
 		if( ! $user OR ! $user->loaded())
-		{
-			$this->request->redirect(Route::url('default', array('lang' => I18n::lang())));
-		}
+			HTTP::redirect(Route::url('default', array('lang' => I18n::lang())));
 
-		$user_data = $user->user_data;
-		$avatar = ($user->has_avatar)
-			? 'media/images/avatars/'.$user->id.'/avatar.jpg'
-			: 'i/stubs/avatar_comment.png';
-
-		StaticCss::instance()->add('css/imgareaselect-animated.css', NULL, 'modpath');
 		StaticJs::instance()
-			->add('js/jquery.imgareaselect.min.js', NULL, 'modpath')
-			->add('js/jquery.ocupload-1.1.2.js', NULL, 'modpath')
-			->add('js/profile.js', NULL, 'module')
+			->add_modpath('js/jquery.maskedinput-1.3.min.js')
+			->add_modpath('js/userdata.js')
 		;
-		$this->page_title = __('Личный кабинет');
-		$this->template->content = View::factory('frontend/content/user/cabinet')
-			->bind('profile', $user)
-			->bind('user_data', $user_data)
-			->bind('users', $users)
-			->bind('avatar', $avatar)
-			->bind('enrollments', $enrollments)
+
+		$this->template->modals .= View::factory('frontend/modal/user/inputError');
+
+		$this->page_title = __('Личный данные');
+		$this->template->content = View::factory('frontend/form/user/mydata')
+			->bind('user', $user)
 		;
 	}
 
-	public function action_delete_avatar()
-	{
-		Jelly::query('user', $this->_user->id)->set(array('has_avatar' => FALSE))->update();
-
-		$avatar_path = DOCROOT.'media'.DIRECTORY_SEPARATOR.
-		               'images'.DIRECTORY_SEPARATOR.
-		               'avatars'.DIRECTORY_SEPARATOR.
-		               $this->_user->id.DIRECTORY_SEPARATOR;
-		$avatar = $avatar_path.'avatar.jpg';
-		$thumb  = $avatar_path.'thumb.jpg';
-
-		if(file_exists($avatar))
-			unlink($avatar);
-
-		if(file_exists($thumb))
-			unlink($thumb);
-
-		$this->request->redirect($this->request->referrer());
-	}
-
-	public function action_profile_request()
-	{
-
-	}
-
-	public function action_profile_confirm()
-	{
-
-	}
-
-	public function action_profile()
-	{
-
-	}
 
 	/**
 	 * User password changing
 	 *
 	 * @return void
 	 */
-	public function action_change_password()
+	public function action_change_pass()
 	{
-		$user = $this->_user;
+		if( ! Auth::instance()->logged_in())
+			HTTP::redirect(Route::url('default', array('lang' => I18n::lang())));
 
+		$user = Jelly::query('user', Auth::instance()->get_user()->id)->select();
 		if( ! $user OR ! $user->loaded())
-		{
-			$this->request->redirect(Route::url('default', array('lang' => I18n::lang())));
-		}
+			HTTP::redirect(Route::url('default', array('lang' => I18n::lang())));
 
-		$errors = NULL;
-		$message = NULL;
-
-		if($this->request->method() === HTTP_Request::POST)
-		{
-			if($this->request->post('password') == '')
-			{
-				$errors['password'] = __('Необходимо ввести новый пароль');
-			}
-			else
-			{
-				try
-				{
-					$user->update_user($this->request->post(), array('password','password_confirm'));
-				}
-				catch(Jelly_Validation_Exception $e)
-				{
-					$errors = $e->errors('validate');
-				}
-			}
-
-			if( ! $errors)
-			{
-				$message = __('<strong>Отлично!</strong> Пароль успешно изменён!')
-				         .' '. HTML::anchor('', __('Вернуться'));
-			}
-		}
+		StaticJs::instance()
+			->add_modpath('js/userdata.js')
+		;
 
 		$this->template->title = __('Смена пароля');
-		$this->template->page_title = __('Смена пароля');
-		$this->template->content = View::factory('frontend/form/auth/password/change')
-			->bind('user', $user)
-			->bind('errors', $errors)
-			->bind('message', $message)
-		;
+		$this->template->content = View::factory('frontend/form/auth/password/change');
 	}
 
 	public function action_edit()

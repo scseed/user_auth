@@ -44,7 +44,7 @@ class Controller_Ajax_Auth extends Controller_Ajax_Template {
 				$post_data['password'],
 				(bool) $post_data['remember']))
 			{
-				$response = array('status' => 1);
+				$response = array('status' => 1, 'referrer' => Session::instance()->get('url'));
 			}
 			else
 			{
