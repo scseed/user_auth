@@ -21,7 +21,7 @@ $(document).ready(function(){
 		}
 	});
 
-	$('#userdata, #passwordChange').find('input').on('change', function(){
+	$('#userdata, #passwordChange').find('input[type!=checkbox]').on('change', function(){
 		var control = $(this);
 		var loading = control.parent().find('.loading').find('.icon-refresh');
 		var group   = control.parent().parent();
@@ -29,27 +29,52 @@ $(document).ready(function(){
 		loading.removeClass('hide').addClass('rotate');
 		control.attr('disabled', 'disabled');
 
-		var name  = $(this).prop('name');
-		var value = $(this).val();
+		var name     = $(this).prop('name')
+		  , value    = $(this).val()
+		  , oldvalue = null
+		  ;
+
+		if(name == 'new_password')
+			oldvalue = group.prev().find('input[type=password]').val();
+
 		$.ajax({
 			url: '/'+lang+'/ajax/user/update',
 			type:'post',
 			dataType:'json',
-			data: {name: name, value: value},
+			data: {name: name, value: value, oldvalue: oldvalue},
 			success: function(response){
 				loading.addClass('hide').removeClass('rotate');
 				control.removeAttr('disabled');
+				var inputError  = $('#inputError')
+				  , errorHeader = inputError.find('.modal-header')
+				  , errorBody   = inputError.find('.modal-body')
+				  , errorFooter = inputError.find('.modal-footer')
+				;
+
 				if(response.status == true)
 				{
 					group.removeClass('error').addClass('success');
-					if(response.redirect)
+					if(response.redirect && response.message == '')
 						checkDataFillness(response.redirect);
+
+					if(response.redirect && response.message)
+					{
+						inputError.find('.modal-body').empty();
+						errorBody.append('<p>'+response.message.text+'</p>');
+						errorHeader.find('h3').text(response.message.head);
+						errorFooter.find('a')
+							.attr('href', response.redirect)
+							.text(response.message.button)
+							.addClass('btn-success')
+							.removeAttr('data-dismiss')
+						;
+
+						inputError.modal('show');
+					}
 				}
 				else
 				{
 					group.addClass('error').removeClass('success');
-					var inputError = $('#inputError');
-					var errorBody = inputError.find('.modal-body');
 					inputError.find('.modal-body').empty();
 					$.each(response.errors, function(idx, error){
 						$.each(error, function(param, val){errorBody.append('<p>'+val+'</p>')});

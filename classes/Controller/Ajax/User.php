@@ -10,7 +10,8 @@ class Controller_Ajax_User extends Controller_Ajax_Template {
 
 	public function action_update()
 	{
-		$redirect        = NULL;
+		$redirect = NULL;
+		$message  = NULL;
 
 		$user = Jelly::query('user',$this->_user->id)->select();
 
@@ -19,6 +20,7 @@ class Controller_Ajax_User extends Controller_Ajax_Template {
 		$post   = array(
 			'name'  => NULL,
 			'value' => NULL,
+			'oldvalue' => NULL,
 		);
 
 		$post_data = Arr::extract($this->request->post(), array_keys($post));
@@ -29,7 +31,7 @@ class Controller_Ajax_User extends Controller_Ajax_Template {
 		$field_exists = FALSE;
 		foreach($fields as $field)
 		{
-			if($field->name == $post_data['name'])
+			if($field->name == $post_data['name'] OR $post_data['name'] == 'old_password' OR $post_data['name'] == 'new_password')
 				$field_exists = TRUE;
 		}
 
@@ -45,10 +47,40 @@ class Controller_Ajax_User extends Controller_Ajax_Template {
 				case 'last_name':
 				case 'first_name':
 				case 'patronymic':
+				case 'old_password':
+				case 'new_password':
+					$value = HTML::chars(trim($value));
 					break;
 			}
+			$value = ($value == '') ? NULL : $value;
 
-			$user->$post_data['name'] = ($value == '') ? NULL : $value;
+			if($post_data['name'] == 'old_password')
+			{
+				if(Auth::instance()->hash($value) != $user->password)
+				{
+					$value = Auth::instance()->hash($value).' = '.$user->password;
+					$errors[] = array('password' => __('Текущий пароль неверен!'));
+				}
+			}
+			elseif($post_data['oldvalue'] AND $post_data['name'] == 'new_password')
+			{
+				if(Auth::instance()->hash($post_data['oldvalue']) != $user->password)
+				{
+					$errors[] = array('password' => __('Текущий пароль неверен!'));
+				}
+				if(Auth::instance()->hash($value) == $user->password)
+				{
+					$errors[] = array('password' => __('Новый пароль такой же как старый. Изменений не произведено'));
+				}
+				else
+				{
+					$user->password = $value;
+				}
+			}
+			else
+			{
+				$user->$post_data['name'] = $value;
+			}
 		}
 		else
 		{
@@ -56,25 +88,38 @@ class Controller_Ajax_User extends Controller_Ajax_Template {
 		}
 
 		if( ! $value)
+		{
+			$errors = array();
 			$errors[] = array('value' => __('Поле оставлено пустым! Необходимо его заполнить!'));
-
-		try
-		{
-			$user->save();
 		}
-		catch(Jelly_Validation_Exception $e)
+
+		if($user->changed())
 		{
-			$errors[] = $e->errors('validate');
+			try
+			{
+				$user->save();
+				$message  = array(
+					'head'   => __('Успех!'),
+					'text'   => __('Пароль успешно изменён'),
+					'button' => __('Отлично!'),
+				);
+				$redirect = Route::url('user', array('lang' => I18n::$lang, 'action' => 'change_pass'));
+			}
+			catch(Jelly_Validation_Exception $e)
+			{
+				$errors[] = $e->errors('validate');
+			}
 		}
 
 		if(!$errors)
 			$status = TRUE;
 
 		$this->response->body(json_encode(array(
-			'status'     => $status,
-			'errors'     => $errors,
-			'redirect'   => $redirect,
-			'value'   => $value,
+			'status'   => $status,
+			'errors'   => $errors,
+			'message'  => $message,
+			'redirect' => $redirect,
+			'value'    => $value,
 		)));
 	}
 

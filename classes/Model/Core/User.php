@@ -37,9 +37,13 @@ abstract class Model_Core_User extends Model_Auth_User {
 					),
 					'unique' => TRUE,
 				)),
-			'password' => Jelly::field('Password', array(
-					'label'    => __('Пароль'),
-				)),
+			'password' => Jelly::field('password', array(
+				'label' => __('Пароль'),
+//				'rules' => array(
+//					array('not_empty'),
+//				),
+				'hash_with' => array(Auth::instance(), 'hash'),
+			)),
 
 			'roles'  => Jelly::field('ManyToMany', array(
 					'label' => __('Роли пользователя'),

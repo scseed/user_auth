@@ -6,16 +6,16 @@
 			<div class="control-group">
 				<label class="control-label" for="passCurrent">Ваш текущий пароль</label>
 				<div class="controls">
-					<input type="text" id="passCurrent" required="required" class="input-xlarge">
-					<input type="password"required="required" class="input-xlarge hide">
+					<input type="text" name="old_password" id="passCurrent" required="required" class="input-xlarge">
+					<input type="password" name="old_password" required="required" class="input-xlarge hide">
 					<span class="loading"><i class="icon-refresh hide"></i></span>
 				</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label" for="passNew">Новый пароль</label>
 				<div class="controls">
-					<input type="text" id="passNew" required="required" class="input-xlarge">
-					<input type="password" required="required" class="input-xlarge hide">
+					<input type="text" name="new_password" id="passNew" required="required" class="input-xlarge">
+					<input type="password" name="new_password" required="required" class="input-xlarge hide">
 					<span class="loading"><i class="icon-refresh hide"></i></span>
 				</div>
 			</div>
