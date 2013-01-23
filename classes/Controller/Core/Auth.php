@@ -300,7 +300,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 			->set(array(
 				'object'         => 'user',
 				'object_id'      => $user->id,
-				'hash'           => md5(text::random()),
+				'hash'           => md5(Text::random()),
 				'date_valid_end' => time() + 3600*24,
 			));
 
@@ -437,7 +437,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 				$new_hash->set(array(
 					'object' => $hash->object,
 					'object_id' => $hash->object_id,
-					'hash' => md5(text::random()),
+					'hash' => md5(Text::random()),
 					'date_valid_end' => time() + 3600*24,
 				));
 				$new_hash->save();

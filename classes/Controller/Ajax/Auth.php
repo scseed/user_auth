@@ -137,7 +137,7 @@ class Controller_Ajax_Auth extends Controller_Ajax_Template {
 		$hash->set(array(
 			'object' => 'new_user',
 			'object_id' => $email,
-			'hash' => md5(text::random()),
+			'hash' => md5(Text::random()),
 			'date_valid_end' => time() + 3600*24,
 		));
 
@@ -182,7 +182,7 @@ class Controller_Ajax_Auth extends Controller_Ajax_Template {
 		->set(array(
 			'object'         => 'user',
 			'object_id'      => $user->id,
-			'hash'           => md5(text::random()),
+			'hash'           => md5(Text::random()),
 			'date_valid_end' => time() + 3600*24,
 		));
 
