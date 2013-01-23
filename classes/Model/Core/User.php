@@ -26,9 +26,7 @@ abstract class Model_Core_User extends Model_Auth_User {
 				)),
 			// Disable 'username' field
 			'username'   => Jelly::field('String', array(
-//						'in_db' => FALSE,
-//						'in_form'  => FALSE,
-//						'in_table' => FALSE,
+						'in_table' => FALSE,
 				)),
 			'email'      => Jelly::field('Email', array(
 					'label' => __('Email'),
@@ -39,12 +37,8 @@ abstract class Model_Core_User extends Model_Auth_User {
 				)),
 			'password' => Jelly::field('password', array(
 				'label' => __('Пароль'),
-//				'rules' => array(
-//					array('not_empty'),
-//				),
 				'hash_with' => array(Auth::instance(), 'hash'),
 			)),
-
 			'roles'  => Jelly::field('ManyToMany', array(
 					'label' => __('Роли пользователя'),
 				)),

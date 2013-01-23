@@ -44,8 +44,7 @@
 			<div class="control-group">
 				<label class="control-label" for="email"><?php echo __('Контактный email')?></label>
 				<div class="controls">
-					<input type="text" name="email" value="<?php echo $user->email?>" id="email" required="required" class="input-xlarge" placeholder="<?php echo __('your@email.com')?>" >
-					<span class="loading"><i class="icon-refresh hide"></i></span>
+					<span class="input-xlarge uneditable-input"><?php echo $user->email?></span>
 				</div>
 			</div>
 		</div>

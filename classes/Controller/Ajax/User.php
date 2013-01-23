@@ -13,8 +13,9 @@ class Controller_Ajax_User extends Controller_Ajax_Template {
 		$redirect = NULL;
 		$message  = NULL;
 
-		$user        = Jelly::query('user',$this->_user->id)->select();
-		$force_login = Session::instance()->get_once('auth_forced');
+		$user         = Jelly::query('user',$this->_user->id)->select();
+		$force_login  = Session::instance()->get_once('auth_forced');
+		$registration = Session::instance()->get_once('registration');
 
 		$status = FALSE;
 		$errors = NULL;
@@ -44,7 +45,7 @@ class Controller_Ajax_User extends Controller_Ajax_Template {
 			{
 				case 'phone':
 					$value = preg_replace('/([-\(\)\s\+]?)/', '', $value);
-					break;
+				break;
 				case 'last_name':
 				case 'first_name':
 				case 'patronymic':
@@ -76,12 +77,24 @@ class Controller_Ajax_User extends Controller_Ajax_Template {
 				else
 				{
 					$user->password = $value;
+					$message  = array(
+						'head'   => __('Успех!'),
+						'text'   => __('Пароль успешно изменён'),
+						'button' => __('Отлично!'),
+					);
 				}
 			}
 			elseif($force_login AND $post_data['name'] == 'new_password')
 			{
 				$user->password = $value;
-				$redirect = Route::url('default', array('lang' => I18n::$lang));
+
+				$redirect = ($registration)
+					? Route::url('user',    array('lang' => I18n::$lang, 'action' => 'mydata'))
+					: Route::url('default', array('lang' => I18n::$lang));
+//
+//				$redirect = ($redirect)
+//					? $redirect
+//					: Route::url('user', array('lang' => I18n::$lang, 'action' => 'change_pass'));
 			}
 			else
 			{
@@ -104,14 +117,6 @@ class Controller_Ajax_User extends Controller_Ajax_Template {
 			try
 			{
 				$user->save();
-				$message  = array(
-					'head'   => __('Успех!'),
-					'text'   => __('Пароль успешно изменён'),
-					'button' => __('Отлично!'),
-				);
-				$redirect = ($redirect)
-					? $redirect
-					: Route::url('user', array('lang' => I18n::$lang, 'action' => 'change_pass'));
 			}
 			catch(Jelly_Validation_Exception $e)
 			{
@@ -122,13 +127,13 @@ class Controller_Ajax_User extends Controller_Ajax_Template {
 		if(!$errors)
 			$status = TRUE;
 
-		$this->response->body(json_encode(array(
+		$this->response_body = array(
 			'status'   => $status,
 			'errors'   => $errors,
 			'message'  => $message,
 			'redirect' => $redirect,
 			'value'    => $value,
-		)));
+		);
 	}
 
 } // End Controller_User

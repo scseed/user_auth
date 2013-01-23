@@ -10,10 +10,17 @@ class Controller_Ajax_Auth extends Controller_Ajax_Template {
 
 	public function before()
 	{
-		parent::before();
-
 		$this->_email  = Kohana::$config->load('email');
 		$this->_config = Kohana::$config->load('user_auth');
+
+		if($this->request->action() == 'register' AND ! $this->_config->open_registration)
+		{
+			$this->_auth_required = TRUE;
+		}
+
+		parent::before();
+
+
 	}
 
 	/**
@@ -27,13 +34,11 @@ class Controller_Ajax_Auth extends Controller_Ajax_Template {
 			HTTP::redirect('');
 
 		$errors   = NULL;
-		$response = array('status' => 0, 'message' => 'request error');
 		$post     = array(
 			'email'    => NULL,
 			'password' => NULL,
 			'remember' => FALSE
 		);
-		$errors = NULL;
 
 		if($this->request->method() === HTTP_Request::POST)
 		{
@@ -44,15 +49,13 @@ class Controller_Ajax_Auth extends Controller_Ajax_Template {
 				$post_data['password'],
 				(bool) $post_data['remember']))
 			{
-				$response = array('status' => 1, 'referrer' => Session::instance()->get('url'));
+				$this->response_body = array('status' => 1, 'referrer' => Session::instance()->get('url'));
 			}
 			else
 			{
-				$response = array('status' => 0, 'message' => __('Неверное имя пользователя или пароль'));
+				$this->response_body = array('status' => 0, 'message' => __('Неверное имя пользователя или пароль'));
 			}
 		}
-
-		$this->response->body(json_encode($response));
 	}
 
 
@@ -63,8 +66,6 @@ class Controller_Ajax_Auth extends Controller_Ajax_Template {
 	 */
 	public function action_remember()
 	{
-		$response = array('status' => 0, 'message' => 'request error');
-
 		if($this->request->method() === HTTP_Request::POST)
 		{
 			$post = Validation::factory(Arr::extract($this->request->post(), array('email')))
@@ -75,7 +76,7 @@ class Controller_Ajax_Auth extends Controller_Ajax_Template {
 
 			if( ! $post->check())
 			{
-				$response['message'] = $post->errors('validate');
+				$this->response_body['message'] = $post->errors('validate');
 			}
 			else
 			{
@@ -87,16 +88,86 @@ class Controller_Ajax_Auth extends Controller_Ajax_Template {
 				if($user->loaded())
 				{
 					if($this->_send_new_password($user))
-						$response = array('status' => 1);
+						$this->response_body = array('status' => 1);
 				}
 				else
 				{
-					$response['message'] = __('Email адрес не зарегистрирован!');
+					$this->response_body['message'] = __('Email адрес не зарегистрирован!');
 				}
 			}
 		}
+	}
 
-		$this->response->body(json_encode($response));
+	public function action_register()
+	{
+		$errors   = NULL;
+
+		if($this->request->method() === HTTP_Request::POST)
+		{
+			$post_data = Arr::extract($this->request->post(), array('email'));
+			$post = Validation::factory($post_data)
+				->rule('email', 'not_empty')
+				->rule('email', 'email')
+				->label('email', __('Эл. адрес'))
+			;
+
+			$emails = Jelly::query('user')->where('email', '=', $post_data['email'])->count();
+
+			if( ! $post->check() OR $emails)
+			{
+				$this->response_body['message'] = ($post->errors('validate')) ? $post->errors('validate') : __('Пользователь с таким email существует!');
+			}
+			else
+			{
+				$this->_send_confirmation($post_data['email']);
+				$this->response_body = array('status' => 1);
+			}
+		}
+	}
+
+	/**
+	 * Отправка письма с ссылкой для подтверждения аккаунта
+	 *
+	 * @throws HTTP_Exception_500
+	 * @return void
+	 */
+	protected function _send_confirmation($email)
+	{
+		$hash = Jelly::factory('hash');
+		$hash->set(array(
+			'object' => 'new_user',
+			'object_id' => $email,
+			'hash' => md5(text::random()),
+			'date_valid_end' => time() + 3600*24,
+		));
+
+		try
+		{
+			$hash->save();
+
+			// отправка пользователю письма с ссылкой для подтверждения аккаунта
+			$message = View::factory('frontend/content/auth/mail/confirm')
+				->set('lang', $this->request->param('lang'))
+				->set('hash', $hash->hash);
+
+
+			Email::factory(
+				__('Подтверждения регистрации | :site_name', array(':site_name' => $this->_config->site->site_name)),
+				$message,
+				'text/html'
+			)
+				->to($email)
+				->from($this->_email->email_noreply)
+				->bcc('smgladkovskiy@gmail.com')
+				->send()
+			;
+
+			$this->response_body['status'] = 1;
+		}
+		catch(Jelly_Validation_Exception $he)
+		{
+			throw new HTTP_Exception_500();
+		}
 	}
 
 	/**

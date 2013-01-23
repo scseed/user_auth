@@ -288,58 +288,6 @@ abstract class Controller_Core_Auth extends Controller_Template {
 	}
 
 	/**
-	 * Отправка письма с ссылкой для подтверждения аккаунта
-	 *
-	 * @throws HTTP_Exception_500
-	 * @param Jelly_Model $user
-	 * @return void
-	 */
-	protected function _send_confirmation(Jelly_Model $user)
-	{
-		$hash = Jelly::factory('hash');
-		$hash->set(array(
-			'object' => 'user',
-			'object_id' => $user->id,
-			'hash' => md5(text::random()),
-			'date_valid_end' => time() + 3600*24,
-		));
-
-		try
-		{
-			$hash->save();
-
-			// отправка пользователю письма с ссылкой для подтверждения аккаунта
-			$message = View::factory('frontend/content/auth/mail/confirm')
-				->set('lang', $this->request->param('lang'))
-				->set('hash', $hash->hash);
-
-
-			Email::connect();
-			Email::send(
-				$user->email,
-				$this->_email->email_noreply,
-				__('Подтверждения регистрации | :site_name', array(':site_name' => $this->_config->site->site_name)),
-				$message,
-				TRUE
-			);
-
-			$user->user_session = NULL;
-			$user->save();
-
-			$this->request->redirect(
-				Route::url('auth', array(
-					'action' => 'message',
-					'hash' => 'reg_success',
-				))
-			);
-		}
-		catch(Jelly_Validation_Exception $he)
-		{
-			throw new HTTP_Exception_500();
-		}
-	}
-
-	/**
 	 * Отправка письма со ссылкой для смены пароля
 	 *
 	 * @throws HTTP_Exception_500
@@ -431,7 +379,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 
 	    if( ! $hash->loaded() OR $hash->date_valid_end < time())
 	    {
-			$this->request->redirect(
+			HTTP::redirect(
 				Route::url('auth', array(
 					'action' => 'message',
 					'hash' => 'conf_fail',
@@ -439,27 +387,37 @@ abstract class Controller_Core_Auth extends Controller_Template {
 			);
 	    }
 
-		$password = Text::random();
+		$user = Jelly::factory('user')->set(array(
+			'email' => $hash->object_id,
+		));
+		try
+		{
+			$user->save();
+		}
+		catch(Jelly_Validation_Exception $e)
+		{
+			exit(Debug::vars($e->errors('validate')));
+		}
 
-		$user = Jelly::query($hash->object, $hash->object_id)->select();
-		$user->is_active = TRUE;
-		$user->password = $password;
+
 		$user->add('roles', Jelly::query('role')->where('name', '=', 'login')->limit(1)->execute());
 		$user->save();
 
-		$this->_send_registration_emails($user, $password);
+		Auth::instance()->force_login($user, TRUE);
 
-		// Залогинивание пользователя
-		if(Auth::instance()->login($user->email, $password, TRUE))
-		{
-			$hash->delete();
-		}
+		$hash->delete();
 
-		$this->request->redirect(
-			Route::url('auth', array(
-				'action' => 'message',
-				'hash' => 'reg_confirmed',
-			))
+		Session::instance()->set('registration', TRUE);
+
+		// редирект на страницу смены пароля
+		HTTP::redirect(
+			Route::url(
+				'user',
+				array(
+					'lang' => I18n::$lang,
+					'action' => 'change_pass',
+				)
+			)
 		);
 	}
 

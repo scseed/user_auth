@@ -48,4 +48,29 @@ $(document).ready(function(){
 			}
 		}
 	});
+
+	var userAdd = $('#userAdd');
+	userAdd.find('form').ajaxForm({
+		dataType: 'json',
+		beforeSend: function(){
+			userAdd.find('.errors').remove();
+		},
+		success: function(response, status){
+			if(response.status == 1)
+			{
+				userAdd.modal('hide');
+				userAdd.on('hidden', function(){
+					$('#registrationEmailSend').modal('show');
+				});
+
+			}
+			else
+			{
+				var alert_div = '<div class="errors alert alert-error">'
+				+ response.message
+				+ '</div>';
+				userAdd.find('.modal-body').prepend(alert_div);
+			}
+		}
+	});
 });
