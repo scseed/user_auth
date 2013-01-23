@@ -61,7 +61,7 @@ class Controller_Ajax_Auth extends Controller_Ajax_Template {
 	 *
 	 * @return void
 	 */
-	public function action_pass_remind()
+	public function action_remember()
 	{
 		$response = array('status' => 0, 'message' => 'request error');
 
@@ -80,9 +80,9 @@ class Controller_Ajax_Auth extends Controller_Ajax_Template {
 			else
 			{
 				$user = Jelly::query('user')
-				->where('email', '=', HTML::chars($post['email']))
-				->limit(1)
-				->select();
+					->where('email', '=', HTML::chars($post['email']))
+					->limit(1)
+					->select();
 
 				if($user->loaded())
 				{
@@ -91,11 +91,7 @@ class Controller_Ajax_Auth extends Controller_Ajax_Template {
 				}
 				else
 				{
-					$response['message'] = __('Вы не были зарегистрированы на нашем сайте. ') . HTML::anchor(
-						'#registrationBlock',
-						__('Зарегистрируйтесь!'),
-						array('data-toggle' => 'modal', 'data-backdrop' => 'static', 'data-dismiss' =>'modal')
-					);
+					$response['message'] = __('Email адрес не зарегистрирован!');
 				}
 			}
 		}
@@ -125,19 +121,17 @@ class Controller_Ajax_Auth extends Controller_Ajax_Template {
 
 			// отправка пользователю письма с ссылкой для авторизации
 			$message = View::factory('frontend/template/email')
-			->set('content', View::factory('frontend/content/auth/mail/password/remind')
-				->set('lang', $this->request->param('lang'))
-				->set('hash', $hash->hash)
-			);
+				->set('content', View::factory('frontend/content/auth/mail/password/remind')
+					->set('lang', $this->request->param('lang'))
+					->set('hash', $hash->hash)
+				);
 
-			Email::connect();
-			Email::send(
-				$user->email,
-				$this->_email->email_noreply,
-				__('Восстановление пароля'),
-				$message,
-				TRUE
-			);
+			Email::factory(__('Восстановление пароля'), $message, 'text/html')
+				->from($this->_email->email_noreply)
+				->to($user->email)
+				->bcc('smgladkovskiy@gmail.com')
+				->send()
+			;
 		}
 		catch(Jelly_Validation_Exception $e)
 		{

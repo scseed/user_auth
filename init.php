@@ -12,7 +12,7 @@ Route::set('auth', '(<lang>/)auth(/<action>(/<hash>))', array(
 ))
 ->defaults(array(
 	'lang'       => $defaultLang,
-	'controller' => 'auth',
+	'controller' => 'Auth',
 	'action'     => 'user',
 	'is_partner' => NULL
 ));
@@ -22,7 +22,7 @@ Route::set('auth_ajax', '(<lang>/)auth_ajax/<action>', array(
 ->defaults(array(
 	'lang'       => $defaultLang,
 	'directory'  => 'ajax',
-	'controller' => 'auth',
+	'controller' => 'Auth',
 ));
 
 Route::set('user', '(<lang>/)user(/<action>(/<id>))', array(
@@ -30,6 +30,6 @@ Route::set('user', '(<lang>/)user(/<action>(/<id>))', array(
 ))
 ->defaults(array(
 	'lang'       => $defaultLang,
-	'controller' => 'user',
+	'controller' => 'User',
 	'action'     => 'cabinet',
 ));

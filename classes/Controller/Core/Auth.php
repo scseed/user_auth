@@ -69,6 +69,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 
 		StaticJs::instance()->add_modpath('js/auth.js');
 		$this->template->modals .= View::factory('frontend/modal/auth/remember');
+		$this->template->modals .= View::factory('frontend/modal/auth/passEmailSend');
 
 		$this->template->title      = __('Авторизация');
 		$this->template->content    = View::factory('frontend/form/auth/login')
@@ -103,8 +104,9 @@ abstract class Controller_Core_Auth extends Controller_Template {
 
 		if( ! $user->loaded())
 		{
-			$this->request->redirect(
+			HTTP::redirect(
 				Route::url('auth', array(
+					'lang' => I18n::$lang,
 					'action' => 'message',
 					'hash' => 'hash_expired',
 				))
@@ -112,25 +114,19 @@ abstract class Controller_Core_Auth extends Controller_Template {
 		}
 		else
 		{
-//			// присваивание login роли, так как старые записи могут не иметь роли для входа на сайт
-//			if( ! $user->has_role('login'))
-//			{
-//				$user->add('roles', Jelly::query('role')->where('name', '=', 'login')->limit(1)->execute());
-//				$user->save();
-//			}
-
 			// Форсированный вход
-			Auth::instance()->force_login($user);
+			Auth::instance()->force_login($user, TRUE);
 
 			// удаление хэша, дабы устранить повторное использование
 			$hash->delete();
 
 			// редирект на страницу смены пароля
-			$this->request->redirect(
+			HTTP::redirect(
 				Route::url(
 					'user',
 					array(
-						'action' => 'change_password',
+						'lang' => I18n::$lang,
+						'action' => 'change_pass',
 					)
 				)
 			);

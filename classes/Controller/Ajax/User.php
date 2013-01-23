@@ -13,7 +13,8 @@ class Controller_Ajax_User extends Controller_Ajax_Template {
 		$redirect = NULL;
 		$message  = NULL;
 
-		$user = Jelly::query('user',$this->_user->id)->select();
+		$user        = Jelly::query('user',$this->_user->id)->select();
+		$force_login = Session::instance()->get_once('auth_forced');
 
 		$status = FALSE;
 		$errors = NULL;
@@ -77,6 +78,11 @@ class Controller_Ajax_User extends Controller_Ajax_Template {
 					$user->password = $value;
 				}
 			}
+			elseif($force_login AND $post_data['name'] == 'new_password')
+			{
+				$user->password = $value;
+				$redirect = Route::url('default', array('lang' => I18n::$lang));
+			}
 			else
 			{
 				$user->$post_data['name'] = $value;
@@ -103,7 +109,9 @@ class Controller_Ajax_User extends Controller_Ajax_Template {
 					'text'   => __('Пароль успешно изменён'),
 					'button' => __('Отлично!'),
 				);
-				$redirect = Route::url('user', array('lang' => I18n::$lang, 'action' => 'change_pass'));
+				$redirect = ($redirect)
+					? $redirect
+					: Route::url('user', array('lang' => I18n::$lang, 'action' => 'change_pass'));
 			}
 			catch(Jelly_Validation_Exception $e)
 			{

@@ -5,13 +5,14 @@
 		<h3>Восстановление пароля</h3>
 	</div>
 	<div class="modal-body">
-		<p><?php echo Kohana::message('auth', 'pass_remind')?></p>
+		<p><?php echo Kohana::message('auth', 'pass_remind.ask')?></p>
 		<?php echo Form::open(Route::url('auth_ajax', array('lang' => I18n::$lang, 'action' => 'remember')))?>
-			<input type="text" class="input-block-level" placeholder="your@email.com">
-		<?php echo Form::close()?>
+			<input type="text" name="email" class="input-block-level" placeholder="your@email.com">
+
 	</div>
 	<div class="modal-footer">
-		<a href="#" data-dismiss="modal" class="btn btn-success">Восстановить пароль</a>
+		<button class="btn btn-success">Восстановить пароль</button>
 		<a href="#" data-dismiss="modal" class="btn">Отмена</a>
 	</div>
+	<?php echo Form::close()?>
 </div>

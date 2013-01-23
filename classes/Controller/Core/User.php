@@ -129,6 +129,8 @@ abstract class Controller_Core_User extends Controller_Template {
 		if( ! $user OR ! $user->loaded())
 			HTTP::redirect(Route::url('default', array('lang' => I18n::lang())));
 
+		$force_login = Session::instance()->get('auth_forced');
+
 		StaticJs::instance()
 			->add_modpath('js/userdata.js')
 		;
@@ -136,7 +138,7 @@ abstract class Controller_Core_User extends Controller_Template {
 		$this->template->modals .= View::factory('frontend/modal/user/inputError');
 
 		$this->template->title = __('Смена пароля');
-		$this->template->content = View::factory('frontend/form/auth/password/change');
+		$this->template->content = View::factory('frontend/form/auth/password/change')->set('force_login', $force_login);
 	}
 
 } // End Controller_Core_User

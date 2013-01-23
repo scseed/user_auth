@@ -4,7 +4,7 @@
 	<div class="span4">
 		<h3><?php echo __('Внимание!')?></h3>
 		<div class="alert alert-danger">
-			<p>Время сессии истекло! Для получения или смены пароля, воспользуйтесь <?php echo HTML::anchor(Route::url('auth', array('action' => 'pass_remind')), 'интерфейсом напоминания пароля')?>.</p>
+			<p>Время сессии истекло! Для получения или смены пароля, воспользуйтесь <?php echo HTML::anchor(Route::url('auth', array('lang' => I18n::$lang, 'action' => 'login')).'#remindPassword', 'интерфейсом напоминания пароля')?>.</p>
 			<p>Спасибо.</p>
 		</div>
 	</div>

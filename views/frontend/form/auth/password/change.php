@@ -3,6 +3,7 @@
 <form id="passwordChange" class="form-horizontal">
 	<div class="row-fluid">
 		<div class="offset2 span6">
+			<?php if( ! $force_login):?>
 			<div class="control-group">
 				<label class="control-label" for="passCurrent">Ваш текущий пароль</label>
 				<div class="controls">
@@ -11,6 +12,7 @@
 					<span class="loading"><i class="icon-refresh hide"></i></span>
 				</div>
 			</div>
+			<?php endif;?>
 			<div class="control-group">
 				<label class="control-label" for="passNew">Новый пароль</label>
 				<div class="controls">
