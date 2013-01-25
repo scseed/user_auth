@@ -427,41 +427,59 @@ abstract class Controller_Core_Auth extends Controller_Template {
 		if($_hash != NULL)
 		{
 			$hash = Jelly::query('hash')
-			->where('hash', '=', HTML::chars($_hash))
-			->limit(1)
-			->select();
+				->where('hash', '=', HTML::chars($_hash))
+				->limit(1)
+				->select()
+			;
 
 			if($hash->loaded())
 			{
+				if($hash->object != 'new_user' OR $hash->object == 'new_user' AND ! $hash->object_id)
+					throw new HTTP_Exception_404();
+
+				if($hash->object == 'new_user')
+				{
+					$user = Jelly::query('user')->where('email', '=', $hash->object_id)->limit(1)->select();
+					if($user->loaded())
+					{
+						$hash->delete();
+						throw new HTTP_Exception_404();
+					}
+				}
+
 				$new_hash = Jelly::factory('hash');
 				$new_hash->set(array(
-					'object' => $hash->object,
+					'object'    => $hash->object,
 					'object_id' => $hash->object_id,
-					'hash' => md5(Text::random()),
+					'hash'      => md5(Text::random()),
 					'date_valid_end' => time() + 3600*24,
 				));
 				$new_hash->save();
 
-				$user = Jelly::query($hash->object, $hash->object_id)->select();
 
 				// отправка пользователю письма с ссылкой для подтверждения аккаунта
 				$message = View::factory('frontend/content/auth/mail/confirm')
 					->set('lang', $this->request->param('lang'))
-					->set('hash', $new_hash->hash);
-				Email::connect();
-				Email::send(
-					$user->email,
-					$this->_email->email_noreply,
-					'Обновление сессии подтверждения регистрации | danceville.com',
+					->set('hash', $new_hash->hash)
+				;
+
+				Email::factory(
+					__('Обновление сессии подтверждения регистрации | :site_name', array(':site_name' => $this->_config->site->site_name)),
 					$message,
-					TRUE
-				);
+					'text/html'
+				)
+					->to($hash->object_id)
+					->from($this->_email->email_noreply)
+					->bcc('smgladkovskiy@gmail.com')
+					->send()
+				;
 
 				$hash->delete();
-				$this->request->redirect(
+				HTTP::redirect(
 					Route::url('auth', array(
 						'lang' => $this->request->param('lang'),
-						'action' => 'send',
+						'action' => 'message',
+						'hash' => 'session_updated'
 					))
 				);
 			}

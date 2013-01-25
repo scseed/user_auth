@@ -88,13 +88,14 @@ class Controller_Ajax_User extends Controller_Ajax_Template {
 			{
 				$user->password = $value;
 
+				$message  = array(
+					'head'   => __('Успех!'),
+					'text'   => __('Пароль успешно изменён'),
+					'button' => __('Отлично!'),
+				);
 				$redirect = ($registration)
 					? Route::url('user',    array('lang' => I18n::$lang, 'action' => 'mydata'))
 					: Route::url('default', array('lang' => I18n::$lang));
-//
-//				$redirect = ($redirect)
-//					? $redirect
-//					: Route::url('user', array('lang' => I18n::$lang, 'action' => 'change_pass'));
 			}
 			else
 			{
