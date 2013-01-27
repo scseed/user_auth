@@ -1,0 +1,3 @@
+<?php defined('SYSPATH') or die('No direct access allowed.');?>
+<?php echo Form::hidden('id', $user->id)?>
+<p>Подствердите, пожалуйста, смену статуса пользователя <?php echo ($user->last_name) ? $user->last_name : NULL?><?php echo ($user->first_name) ?  ' '.mb_substr($user->first_name, 0, 1).'.' : NULL?><?php echo ($user->patronymic) ? ' '.mb_substr($user->patronymic, 0, 1).'.' : NULL?> c <?php echo ($user->is_active) ? __('активен') : __('неактивен')?> на <?php echo ( ! $user->is_active) ? __('активен') : __('неактивен')?>

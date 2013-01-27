@@ -8,6 +8,8 @@
  */
 class Controller_Ajax_User extends Controller_Ajax_Template {
 
+	protected $_auth_required = TRUE;
+
 	public function action_update()
 	{
 		$redirect = NULL;
@@ -135,6 +137,141 @@ class Controller_Ajax_User extends Controller_Ajax_Template {
 			'redirect' => $redirect,
 			'value'    => $value,
 		);
+	}
+
+	public function action_edit()
+	{
+		$post = array(
+			'id'                 => NULL,
+			'last_name'          => NULL,
+			'first_name'         => NULL,
+			'patronymic'         => NULL,
+			'phone'              => NULL,
+			'email'              => NULL,
+			'is_active'          => FALSE,
+			'notification_email' => FALSE,
+			'notification_sms'   => FALSE,
+		);
+
+		if($this->request->method() === Request::POST)
+		{
+			$post_data = Arr::extract($this->request->post(), array_keys($post));
+
+			$user_id = (int) $post_data['id'];
+
+			if( ! $user_id)
+				throw new HTTP_Exception_404;
+
+			//@todo: проверка на возможность править данные. Либо это сам пользователь, либо админ, либо супер пользователь + соответствующий проект.
+
+			$user = Jelly::query('user', $user_id)->select();
+
+			if( ! $user->loaded())
+				throw new HTTP_Exception_404;
+
+			foreach($post_data as $id => $val)
+			{
+				switch($id)
+				{
+					case 'phone':
+						$post_data[$id] =  preg_replace('/([-\(\)\s\+]?)/', '', $val);
+						break;
+					case 'is_active':
+					case 'notification_email':
+					case 'notification_sms':
+						$post_data[$id] = (bool) $val;
+						break;
+					default:
+						$post_data[$id] = HTML::chars(trim($val));
+						break;
+				}
+			}
+
+			$user->set($post_data);
+
+			try
+			{
+				$user->save();
+				$this->response_body['status']   = TRUE;
+				$this->response_body['json']     = $this->_render_json;
+				$this->response_body['message']  = __('Данные пользователя изменены');
+				$this->response_body['redirect'] = Route::url('user', array('lang' => I18n::$lang, 'action' => 'list'));
+			}
+			catch(Jelly_Validation_Exception $e)
+			{
+				$this->response_body['errors'] = $e->errors('validate');
+			}
+		}
+	}
+	public function action_activity()
+	{
+		$post = array(
+			'id'                 => NULL,
+		);
+
+		if($this->request->method() === Request::POST)
+		{
+			$post_data = Arr::extract($this->request->post(), array_keys($post));
+
+			$user_id = (int) $post_data['id'];
+
+			if( ! $user_id)
+				throw new HTTP_Exception_404;
+
+			//@todo: проверка на возможность править данные. Либо это сам пользователь, либо админ, либо супер пользователь + соответствующий проект.
+
+			$user = Jelly::query('user', $user_id)->select();
+
+			if( ! $user->loaded())
+				throw new HTTP_Exception_404;
+
+			$user->is_active = (bool) ! $user->is_active;
+
+			try
+			{
+				$user->save();
+				$this->response_body['status']   = TRUE;
+				$this->response_body['json']     = $this->_render_json;
+				$this->response_body['message']  = __('Данные пользователя изменены');
+				$this->response_body['redirect'] = Route::url('user', array('lang' => I18n::$lang, 'action' => 'list'));
+			}
+			catch(Jelly_Validation_Exception $e)
+			{
+				$this->response_body['errors'] = $e->errors('validate');
+			}
+		}
+	}
+
+	public function action_edit_body()
+	{
+		$user_id = (int) $this->request->param('id');
+
+		if(!$user_id)
+			throw new HTTP_Exception_404;
+
+		$user = Jelly::query('user', $user_id)->select();
+
+		if( ! $user->loaded())
+			throw new HTTP_Exception_404;
+
+		$this->_render_json  = FALSE;
+		$this->response_body = View::factory('frontend/modal/user/update/body')->bind('user', $user);
+	}
+
+	public function action_activity_body()
+	{
+		$user_id = (int) $this->request->param('id');
+
+		if(!$user_id)
+			throw new HTTP_Exception_404;
+
+		$user = Jelly::query('user', $user_id)->select();
+
+		if( ! $user->loaded())
+			throw new HTTP_Exception_404;
+
+		$this->_render_json  = FALSE;
+		$this->response_body = View::factory('frontend/modal/user/update/activityBody')->bind('user', $user);
 	}
 
 } // End Controller_User

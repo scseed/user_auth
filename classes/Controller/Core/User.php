@@ -28,63 +28,6 @@ abstract class Controller_Core_User extends Controller_Template {
 
 		$this->_email = Kohana::$config->load('email');
 
-		//		StaticCss::instance()
-//			->add('/css/auth.css')
-//			;
-	}
-
-	/**
-	 * User login panel
-	 *
-	 * @return void
-	 */
-	public function action_login_panel()
-	{
-		$post = array(
-			'email'    => NULL,
-			'password' => NULL
-		);
-		$errors = NULL;
-		$can_remember = TRUE;
-		$registration = TRUE;
-		if($this->request->method() === HTTP_Request::POST)
-		{
-			$post = Arr::extract($this->request()->post(), array('email', 'password', 'remember'));
-			$post['remember'] = TRUE;
-
-			if(Auth::instance()->login(
-				$post['email'],
-				$post['password'],
-				! isset($post['remember']) ? TRUE : FALSE))
-			{
-				$this->request->redirect(Request::initial()->referrer());
-			}
-			else
-			{
-				$errors = array('common' => 'Неверное имя пользователя или пароль');
-			}
-		}
-
-		$this->template->title = __('Вход');
-		$this->template->content = View::factory('frontend/form/auth/login')
-			->bind('post', $post)
-			->bind('is_ajax', $this->_ajax)
-			->set('can_remember', $can_remember)
-			->set('registration', $registration)
-			->set('errors', $errors)
-		;
-	}
-
-	/**
-	 * User panel
-	 *
-	 * @return void
-	 */
-	public function action_panel()
-	{
-		$this->template->content = View::factory('frontend/content/user/panel')
-			->bind('user', $this->_user)
-		;
 	}
 
 	/**
@@ -140,6 +83,26 @@ abstract class Controller_Core_User extends Controller_Template {
 		$this->template->title = __('Смена пароля');
 		$this->template->content = View::factory('frontend/form/auth/password/change')
 			->set('force_login', $force_login)
+		;
+	}
+
+	public function action_list()
+	{
+		$users = Jelly::query('user')->select();
+
+		$this->template->modals .= View::factory('frontend/modal/user/create');
+		$this->template->modals .= View::factory('frontend/modal/user/update');
+		$this->template->modals .= View::factory('frontend/modal/user/activity');
+		$this->template->modals .= View::factory('frontend/modal/auth/registrationEmailSend');
+
+		StaticJs::instance()
+			->add('js/user.js')
+			->add_modpath('js/jquery.maskedinput-1.3.min.js')
+		;
+
+		$this->template->title = __('Пользователи Системы');
+		$this->template->content = View::factory('frontend/content/user/list')
+		->bind('users', $users)
 		;
 	}
 
