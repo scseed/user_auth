@@ -96,8 +96,8 @@ abstract class Controller_Core_User extends Controller_Template {
 		$this->template->modals .= View::factory('frontend/modal/auth/registrationEmailSend');
 
 		StaticJs::instance()
-			->add('js/user.js')
 			->add_modpath('js/jquery.maskedinput-1.3.min.js')
+			->add('js/user.js')
 		;
 
 		$this->template->title = __('Пользователи Системы');
