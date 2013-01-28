@@ -49,7 +49,12 @@ class Controller_Core_Ajax_Auth extends Controller_Ajax_Template {
 				$post_data['password'],
 				(bool) $post_data['remember']))
 			{
-				$this->response_body = array('status' => 1, 'referrer' => Session::instance()->get('url'));
+				$this->response_body = array(
+					'status' => 1,
+					'redirect' => (Session::instance()->get('url'))
+						? Session::instance()->get('url')
+						: Route::url('default', array('lang' => I18n::$lang))
+				);
 			}
 			else
 			{
