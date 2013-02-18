@@ -155,6 +155,8 @@ class Controller_Core_Ajax_User extends Controller_Ajax_Template {
 			'is_active'          => FALSE,
 			'notification_email' => FALSE,
 			'notification_sms'   => FALSE,
+			'companies'          => array(),
+			'projects'           => array(),
 		);
 
 		if($this->request->method() === Request::POST)
@@ -184,6 +186,14 @@ class Controller_Core_Ajax_User extends Controller_Ajax_Template {
 					case 'notification_email':
 					case 'notification_sms':
 						$post_data[$id] = (bool) $val;
+						break;
+					case 'companies':
+					case 'projects':
+						if(is_array($val))
+						{
+							foreach($val as $unit_id => $unit)
+								$post_data[$id][$unit_id] = (int) $unit;
+						}
 						break;
 					default:
 						$post_data[$id] = HTML::chars(trim($val));
