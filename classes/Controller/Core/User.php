@@ -86,24 +86,4 @@ abstract class Controller_Core_User extends Controller_Template {
 		;
 	}
 
-	public function action_list()
-	{
-		$users = Jelly::query('user')->select();
-
-		$this->template->modals .= View::factory('frontend/modal/user/create');
-		$this->template->modals .= View::factory('frontend/modal/user/update');
-		$this->template->modals .= View::factory('frontend/modal/user/activity');
-		$this->template->modals .= View::factory('frontend/modal/auth/registrationEmailSend');
-
-		StaticJs::instance()
-			->add_modpath('js/jquery.maskedinput-1.3.min.js')
-			->add('js/user.js')
-		;
-
-		$this->template->title = __('Пользователи Системы');
-		$this->template->content = View::factory('frontend/content/user/list')
-		->bind('users', $users)
-		;
-	}
-
 } // End Controller_Core_User
