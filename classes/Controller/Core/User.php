@@ -37,11 +37,7 @@ abstract class Controller_Core_User extends Controller_Template {
 	 */
 	public function action_mydata()
 	{
-		if( ! Auth::instance()->logged_in())
-			HTTP::redirect(Route::url('default', array('lang' => I18n::lang())));
-
-		$user = Jelly::query('user', Auth::instance()->get_user()->id)->select();
-		if( ! $user OR ! $user->loaded())
+		if( ! $this->_user)
 			HTTP::redirect(Route::url('default', array('lang' => I18n::lang())));
 
 		StaticJs::instance()
@@ -53,7 +49,7 @@ abstract class Controller_Core_User extends Controller_Template {
 
 		$this->page_title = __('Личный данные');
 		$this->template->content = View::factory('frontend/form/user/mydata')
-			->bind('user', $user)
+			->bind('user', $this->_user)
 		;
 	}
 
@@ -65,13 +61,6 @@ abstract class Controller_Core_User extends Controller_Template {
 	 */
 	public function action_change_pass()
 	{
-		if( ! Auth::instance()->logged_in())
-			HTTP::redirect(Route::url('default', array('lang' => I18n::lang())));
-
-		$user = Jelly::query('user', Auth::instance()->get_user()->id)->select();
-		if( ! $user OR ! $user->loaded())
-			HTTP::redirect(Route::url('default', array('lang' => I18n::lang())));
-
 		$force_login  = Session::instance()->get('auth_forced');
 
 		StaticJs::instance()

@@ -390,6 +390,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 		$user = Jelly::factory('user')->set(array(
 			'email' => $hash->object_id,
 		));
+
 		try
 		{
 			$user->save();
@@ -401,7 +402,11 @@ abstract class Controller_Core_Auth extends Controller_Template {
 
 
 		$user->add('roles', Jelly::query('role')->where('name', '=', 'login')->limit(1)->execute());
+		$user->add('roles', $hash->object_params['role']);
+		$user->add('companies', $hash->object_params['companies']);
+		$user->add('projects', $hash->object_params['projects']);
 		$user->save();
+
 
 		Auth::instance()->force_login($user, TRUE);
 

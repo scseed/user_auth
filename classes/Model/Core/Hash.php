@@ -20,6 +20,7 @@ class Model_Core_Hash extends Jelly_Model {
 				'id' => Jelly::field('Primary'),
 				'object' => Jelly::field('String'),
 				'object_id' => Jelly::field('String'),
+				'object_params' => Jelly::field('Serialized'),
 				'hash' => Jelly::field('String'),
 				'date_valid_end' => Jelly::field('Timestamp'),
 			));

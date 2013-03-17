@@ -109,23 +109,54 @@ class Controller_Core_Ajax_Auth extends Controller_Ajax_Template {
 
 		if($this->request->method() === HTTP_Request::POST)
 		{
-			$post_data = Arr::extract($this->request->post(), array('email'));
-			$post = Validation::factory($post_data)
+			$post_data = Arr::extract($this->request->post(), array('email', 'companies_projects', 'role'));
+
+			$post = Validation::factory(Arr::extract($this->request->post(), array_keys($post_data)))
 				->rule('email', 'not_empty')
+				->rule('role', 'not_empty')
+				->rule('role', 'range', array(':value', 0, 100))
 				->rule('email', 'email')
 				->label('email', __('Эл. адрес'))
+				->label('role', __('Роль пользователя'))
 			;
+
+			$companies = array();
+			$projects  = array();
+			if($post_data['companies_projects'])
+			{
+				foreach($post_data['companies_projects'] as $company_project)
+				{
+					$company_project_arr = explode('-', $company_project);
+					$company = (int) $company_project_arr[0];
+					$project = (int) $company_project_arr[1];
+
+					if($company)
+						$companies[$company] = $company;
+
+					if($project)
+						$projects[$company] = $project;
+				}
+			}
+
+			$user_data = array(
+				'role'      => (int) $post_data['role'],
+				'companies' => $companies,
+				'projects'  => $projects,
+			);
 
 			$emails = Jelly::query('user')->where('email', '=', $post_data['email'])->count();
 
 			if( ! $post->check() OR $emails)
 			{
-				$this->response_body['message'] = ($post->errors('validate')) ? $post->errors('validate') : __('Пользователь с таким email существует!');
+				$this->response_body['message'] = ($post->errors('validate'))
+					? $post->errors('validate')
+					: __('Пользователь с таким email существует!')
+				;
 			}
 			else
 			{
-				$this->_send_confirmation($post_data['email']);
-				$this->response_body = array('status' => 1);
+				$this->_send_confirmation($post_data['email'], $user_data);
+				$this->response_body = array('status' => 1, 'redirect' => $this->request->referrer());
 			}
 		}
 	}
@@ -136,12 +167,13 @@ class Controller_Core_Ajax_Auth extends Controller_Ajax_Template {
 	 * @throws HTTP_Exception_500
 	 * @return void
 	 */
-	protected function _send_confirmation($email)
+	protected function _send_confirmation($email, $params)
 	{
 		$hash = Jelly::factory('hash');
 		$hash->set(array(
 			'object' => 'new_user',
 			'object_id' => $email,
+			'object_params' => $params,
 			'hash' => md5(Text::random()),
 			'date_valid_end' => time() + 3600*24,
 		));
