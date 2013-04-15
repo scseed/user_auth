@@ -382,7 +382,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 			HTTP::redirect(
 				Route::url('auth', array(
 					'action' => 'message',
-					'hash' => 'conf_fail',
+					'hash' => 'fail',
 				))
 			);
 	    }
@@ -428,11 +428,11 @@ abstract class Controller_Core_Auth extends Controller_Template {
 
 	public function action_update_hash()
 	{
-		$_hash = $this->request->param('hash');
-		if($_hash != NULL)
+		$hash_sum = $this->request->param('hash');
+		if($hash_sum != NULL)
 		{
 			$hash = Jelly::query('hash')
-				->where('hash', '=', HTML::chars($_hash))
+				->where('hash', '=', HTML::chars($hash_sum))
 				->limit(1)
 				->select()
 			;
@@ -452,20 +452,24 @@ abstract class Controller_Core_Auth extends Controller_Template {
 					}
 				}
 
-				$new_hash = Jelly::factory('hash');
-				$new_hash->set(array(
-					'object'    => $hash->object,
-					'object_id' => $hash->object_id,
+				$hash->set(array(
 					'hash'      => md5(Text::random()),
 					'date_valid_end' => time() + 3600*24,
 				));
-				$new_hash->save();
 
+				try
+				{
+					$hash->save();
+				}
+				catch(Jelly_Validation_Exception $e)
+				{
+					throw new HTTP_Exception_500;
+				}
 
 				// отправка пользователю письма с ссылкой для подтверждения аккаунта
 				$message = View::factory('frontend/content/auth/mail/confirm')
 					->set('lang', $this->request->param('lang'))
-					->set('hash', $new_hash->hash)
+					->set('hash', $hash->hash)
 				;
 
 				Email::factory(
@@ -479,7 +483,6 @@ abstract class Controller_Core_Auth extends Controller_Template {
 					->send()
 				;
 
-				$hash->delete();
 				HTTP::redirect(
 					Route::url('auth', array(
 						'lang' => $this->request->param('lang'),

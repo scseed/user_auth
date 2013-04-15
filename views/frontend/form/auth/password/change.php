@@ -1,5 +1,5 @@
 <?php defined('SYSPATH') or die('No direct access allowed.');?>
-<h1>Смена пароля</h1>
+<h1><?php echo ($force_login) ? __('Установка пароля') : __('Смена пароля')?></h1>
 <form id="passwordChange" class="form-horizontal">
 	<div class="row-fluid">
 		<div class="offset2 span6">
@@ -14,7 +14,7 @@
 			</div>
 			<?php endif;?>
 			<div class="control-group">
-				<label class="control-label" for="passNew">Новый пароль</label>
+				<label class="control-label" for="passNew"><?php echo ($force_login) ? __('Ваш пароль') : __('Новый пароль')?></label>
 				<div class="controls">
 					<input type="text" name="new_password" id="passNew" required="required" class="input-xlarge">
 					<input type="password" name="new_password" required="required" class="input-xlarge hide">

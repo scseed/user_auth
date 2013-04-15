@@ -8,8 +8,10 @@ $(document).ready(function(){
 		dataType: 'json',
 		beforeSend: function(){
 			loginBlock.find('.errors').remove();
+			loginBlock.find('button').button('loading');
 		},
 		success: function(response, status){
+			history.pushState();
 			if(response.status == 1)
 			{
 				window.location.href = response.redirect;
@@ -20,6 +22,7 @@ $(document).ready(function(){
 				+ response.message
 				+ '</div>';
 				loginBlock.prepend(alert_div);
+				loginBlock.find('button').button('reset');
 			}
 		}
 	});
