@@ -11,7 +11,10 @@ $(document).ready(function(){
 			loginBlock.find('button').button('loading');
 		},
 		success: function(response, status){
-			history.pushState();
+			if (navigator.appName == "Netscape"){
+				history.pushState();
+			}
+
 			if(response.status == 1)
 			{
 				window.location.href = response.redirect;
