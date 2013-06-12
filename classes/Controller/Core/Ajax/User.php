@@ -157,6 +157,7 @@ class Controller_Core_Ajax_User extends Controller_Ajax_Template {
 			'notification_sms'   => FALSE,
 			'companies'          => array(),
 			'projects'           => array(),
+			'roles'              => array(),
 		);
 
 		if($this->request->method() === Request::POST)
@@ -189,6 +190,7 @@ class Controller_Core_Ajax_User extends Controller_Ajax_Template {
 						break;
 					case 'companies':
 					case 'projects':
+					case 'roles':
 						if(is_array($val))
 						{
 							foreach($val as $unit_id => $unit)
