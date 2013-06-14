@@ -7,8 +7,8 @@
 	<?php echo Form::open(Route::url('ajax', array('lang' => I18n::$lang, 'controller' => 'user', 'action' => 'activity')))?>
 	<div class="modal-body"></div>
 	<div class="modal-footer">
-		<button class="btn btn-danger">Изменить</button>
-		<a href="#" data-dismiss="modal" class="btn">Отмена</a>
+		<button class="btn btn-danger btn-loading" data-loading-text="<?php echo __('Отправление...')?>"><?php echo __('Изменить')?></button>
+		<a href="#" data-dismiss="modal" class="btn"><?php echo __('Отмена')?></a>
 	</div>
 	<?php echo Form::close();?>
 </div>

@@ -10,7 +10,7 @@
 			<?php echo Form::input('email', NULL, array('class' => 'input-block-level', 'required' => 'required', 'placeholder' => __('Укажите email нового пользователя')))?>
 		</div>
 		<div class="modal-footer">
-			<?php echo Form::button(NULL, __('Отправить'), array('class' => 'btn btn-success'))?>
+			<?php echo Form::button(NULL, __('Отправить'), array('class' => 'btn btn-successbtn-loading', 'data-loading-text' => __('Отправление...')))?>
 			<?php echo HTML::anchor('#', __('Отмена'), array('data-dismiss' => 'modal', 'class' => 'btn'))?>
 		</div>
 	<?php echo Form::close();?>

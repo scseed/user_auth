@@ -2,7 +2,7 @@
 <div id="remindPassword" class="modal hide fade">
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h3>Восстановление пароля</h3>
+		<h3><?php echo __('Восстановление пароля')?></h3>
 	</div>
 	<div class="modal-body">
 		<p><?php echo Kohana::message('auth', 'pass_remind.ask')?></p>
@@ -11,8 +11,8 @@
 
 	</div>
 	<div class="modal-footer">
-		<button class="btn btn-success">Восстановить пароль</button>
-		<a href="#" data-dismiss="modal" class="btn">Отмена</a>
+		<button class="btn btn-success btn-loading" data-loading-text="<?php echo __('Отправка...')?>"><?php echo __('Восстановить пароль')?></button>
+		<a href="#" data-dismiss="modal" class="btn"><?php echo __('Отмена')?></a>
 	</div>
 	<?php echo Form::close()?>
 </div>
