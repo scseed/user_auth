@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct access allowed.');?>
 <h1><?php echo __('Персональные настройки')?></h1>
-<form id="userdata" class="form">
+<?php echo Form::open(NULL, array('id' => "userdata", 'class' => "form"))?>
 	<div class="row-fluid">
 		<div class="span3">
 			<div class="control-group">
@@ -48,5 +48,12 @@
 				</div>
 			</div>
 		</div>
+		<div class="span3">
+			<div class="control-group">
+				<div class="controls">
+					<?php echo Form::button(NULL, __('Сохранить'), array('id' => 'userDataSaveBtn', 'class' => 'btn disabled', 'data-loading-text' => __('Сохранение...'), 'data-save-text' => __('Сохранить'), 'data-saved-text' => __('Сохранено'), 'disabled' => 'disabled'))?>
+				</div>
+			</div>
+		</div>
 	</div>
-</form>
+<?php echo Form::close()?>

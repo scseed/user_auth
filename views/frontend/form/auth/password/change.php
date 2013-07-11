@@ -29,6 +29,11 @@
 					</div>
 				</label>
 			</div>
+			<div class="control-group">
+				<div class="controls">
+					<?php echo Form::button(NULL, __('Сохранить'), array('id' => 'userDataSaveBtn', 'class' => 'btn disabled', 'data-loading-text' => __('Сохранение...'), 'data-save-text' => __('Сохранить'), 'data-saved-text' => __('Сохранено'), 'disabled' => 'disabled'))?>
+				</div>
+			</div>
 		</div>
 	</div>
 </form>

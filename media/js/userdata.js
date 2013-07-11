@@ -1,16 +1,25 @@
 $(document).ready(function(){
-	if($('#phone').length)
+	var saveBtn  = $('#userDataSaveBtn')
+	  , userdata = $('#userdata, #passwordChange')
+	  , phone    = $('#phone')
+	  , birthday = $('#birthdate')
+	;
+
+	if(phone.length)
 	{
-		$('#phone').mask('9 999 999-99-99');
+		phone.mask('9 999 999-99-99');
 	}
-	if($('#birthdate').length)
+	if(birthday.length)
 	{
-		$('#birthdate').mask('99.99.9999');
+		birthday.mask('99.99.9999');
 	}
 
-	$('#userdata, #passwordChange').find('input').on('keydown', function(e){
-		var control = $(this);
-		var loading = control.parent().find('.loading').find('.icon-refresh');
+	userdata.find('input').on('keydown', function(e){
+		var control = $(this)
+		  , loading = control.parent().find('.loading').find('.icon-refresh')
+		;
+
+		saveBtn.button('save');
 		loading.removeClass('hide').css({cursor:'pointer'});
 		if (e.keyCode == 13) {
 			e.preventDefault();
@@ -21,18 +30,17 @@ $(document).ready(function(){
 		}
 	});
 
-	$('#userdata, #passwordChange').find('input[type!=checkbox]').on('change', function(){
-		var control = $(this);
-		var loading = control.parent().find('.loading').find('.icon-refresh');
-		var group   = control.parent().parent();
+	userdata.find('input[type!=checkbox]').on('change', function(){
+		var control = $(this)
+		  , loading = control.parent().find('.loading').find('.icon-refresh')
+		  , group   = control.parent().parent()
+		  , name     = $(this).prop('name')
+		  , value    = $(this).val()
+		  , oldvalue = null
+		;
 
 		loading.removeClass('hide').addClass('rotate');
 		control.attr('disabled', 'disabled');
-
-		var name     = $(this).prop('name')
-		  , value    = $(this).val()
-		  , oldvalue = null
-		  ;
 
 		if(name == 'new_password')
 			oldvalue = group.prev().find('input[type=password]').val();
@@ -42,6 +50,9 @@ $(document).ready(function(){
 			type:'post',
 			dataType:'json',
 			data: {name: name, value: value, oldvalue: oldvalue},
+			beforeSend: function(){
+				saveBtn.button('loading');
+			},
 			success: function(response){
 				loading.addClass('hide').removeClass('rotate');
 				control.removeAttr('disabled');
@@ -53,7 +64,10 @@ $(document).ready(function(){
 
 				if(response.status == true)
 				{
+					saveBtn.button('saved');
+
 					group.removeClass('error').addClass('success');
+
 					if(response.redirect && response.message == '')
 						checkDataFillness(response.redirect);
 
@@ -81,9 +95,13 @@ $(document).ready(function(){
 					});
 
 					inputError.modal('show');
+					saveBtn.button('reset');
 				}
+				setTimeout(function() {
+					saveBtn.prop("disabled", true);
+				}, 0);
 			}
-		})
+		});
 	});
 });
 
