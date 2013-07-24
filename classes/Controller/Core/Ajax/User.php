@@ -22,8 +22,8 @@ class Controller_Core_Ajax_User extends Controller_Ajax_Template {
 		$status = FALSE;
 		$errors = NULL;
 		$post   = array(
-			'name'  => NULL,
-			'value' => NULL,
+			'name'     => NULL,
+			'value'    => NULL,
 			'oldvalue' => NULL,
 		);
 

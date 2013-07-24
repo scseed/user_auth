@@ -6,7 +6,7 @@
  * @package User_Auth
  * @author  Sergei Gladkovskiy <smgladkovskiy@gmail.com>
  */
-abstract class Model_Core_User extends Model_Auth_User {
+class Model_Core_User extends Model_Auth_User {
 
 	/**
 	 * Initializating model meta information

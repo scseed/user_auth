@@ -19,8 +19,6 @@ class Controller_Core_Ajax_Auth extends Controller_Ajax_Template {
 		}
 
 		parent::before();
-
-
 	}
 
 	/**
