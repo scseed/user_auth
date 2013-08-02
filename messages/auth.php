@@ -1,5 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
+$config = Kohana::$config->load('user_auth');
+
 return array(
 	'pass_remind' => array(
 		'ask' => 'Введите Ваше email, который указан при регистрации. На него будут высланы инструкции по восстановлению пароля.',
@@ -8,7 +10,7 @@ return array(
 	'registration' => array(
 		'send' => 'На указанный контактный email были отправлены инструкции для регистрации.',
 		'link' => '',
-		'invitation' => 'Для регистрации на Buildox.com, пройдите по ссылке ниже',
+		'invitation' => 'Для регистрации на '.$config->site->site_name.', пройдите по ссылке ниже',
 		'session_end' => 'Если Вы в течение суток не прошли по ссылке выше, срок действия Вашей сессии истечёт. Для возможности войти, обновите сессию, пройдя по ссылке ниже.'
 	),
 );

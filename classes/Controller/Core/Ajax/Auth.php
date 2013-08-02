@@ -187,7 +187,7 @@ class Controller_Core_Ajax_Auth extends Controller_Ajax_Template {
 
 
 			Email::factory(
-				__('Подтверждения регистрации | :site_name', array(':site_name' => $this->_config->site->site_name)),
+				__('Подтверждение регистрации | :site_name', array(':site_name' => $this->_config->site->site_name)),
 				$message,
 				'text/html'
 			)
