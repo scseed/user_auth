@@ -21,7 +21,7 @@ Route::set('auth_ajax', '(<lang>/)auth_ajax/<action>', array(
 ))
 ->defaults(array(
 	'lang'       => $defaultLang,
-	'directory'  => 'ajax',
+	'directory'  => 'Ajax',
 	'controller' => 'Auth',
 ));
 
