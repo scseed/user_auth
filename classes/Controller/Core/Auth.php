@@ -39,7 +39,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 	 */
 	public function action_login()
 	{
-//		$registration = $this->_config->open_registration;
+		$registration = $this->_config->open_registration;
 		if(Auth::instance()->logged_in())
 			HTTP::redirect();
 
@@ -75,10 +75,10 @@ abstract class Controller_Core_Auth extends Controller_Template {
 
 		$this->template->title      = __('Авторизация');
 		$this->template->content    = View::factory('frontend/form/auth/login')
-//			->bind('registration', $registration)
+			->bind('registration', $registration)
 			->bind('post', $post)
 			->bind('errors', $errors)
-//			->set('can_remember', $this->_config->remember_functional)
+			->set('can_remember', $this->_config->remember_functional)
 		;
 	}
 
