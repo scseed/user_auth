@@ -8,10 +8,13 @@
  */
 class Controller_Core_Ajax_Auth extends Controller_Ajax_Template {
 
+	protected $_referrer;
+
 	public function before()
 	{
 		$this->_email  = Kohana::$config->load('email');
 		$this->_config = Kohana::$config->load('user_auth');
+		$this->_referrer = Session::instance()->get('url', Route::url('default', array('lang' => I18n::$lang)));
 
 		if($this->request->action() == 'register' AND ! $this->_config->open_registration)
 		{
@@ -29,7 +32,11 @@ class Controller_Core_Ajax_Auth extends Controller_Ajax_Template {
 	public function action_login()
 	{
 		if(Auth::instance()->logged_in())
-			HTTP::redirect('');
+		{
+			$this->response_body = array('status' => 0, 'message' => __('Вы уже авторизованы'));
+			return;
+		}
+
 
 		$errors   = NULL;
 		$post     = array(
@@ -43,21 +50,39 @@ class Controller_Core_Ajax_Auth extends Controller_Ajax_Template {
 			$post_data = Arr::extract($this->request->post(), array_keys($post));
 
 			if(Auth::instance()->login(
-				$post_data['email'],
-				$post_data['password'],
-				(bool) $post_data['remember']))
+			       $post_data['email'],
+				       $post_data['password'],
+				       (bool) $post_data['remember']))
 			{
 				$this->response_body = array(
 					'status' => 1,
-					'redirect' => (Session::instance()->get('url'))
-						? Session::instance()->get('url')
-						: Route::url('default', array('lang' => I18n::$lang))
+					'redirect' => $this->_referrer,
 				);
 			}
 			else
 			{
 				$this->response_body = array('status' => 0, 'message' => __('Неверное имя пользователя или пароль'));
 			}
+		}
+	}
+
+	public function action_logout()
+	{
+		if( ! Auth::instance()->logged_in())
+		{
+			$this->response_body = array('status' => 0, 'message' => __('Вы не авторизованы'));
+			return;
+		}
+
+		if (Auth::instance()->logout())
+		{
+			$this->response_body = array(
+				'status'   => 1,
+				'redirect' => $this->_referrer,
+			);
+		}
+		else {
+			$this->response_body = array('status' => 0, 'message' => __('Не удалось завершить выйти'));
 		}
 	}
 
@@ -154,7 +179,10 @@ class Controller_Core_Ajax_Auth extends Controller_Ajax_Template {
 			else
 			{
 				$this->_send_confirmation($post_data['email'], $user_data);
-				$this->response_body = array('status' => 1, 'redirect' => $this->request->referrer());
+				$this->response_body = array(
+					'status' => 1,
+					'redirect' => $this->_referrer,
+				);
 			}
 		}
 	}

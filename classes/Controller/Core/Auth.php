@@ -11,6 +11,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 	protected $_email         = NULL;
 	protected $_config        = NULL;
 	protected $_auth_required = FALSE;
+	protected $_referrer      = NULL;
 
 	public function before()
 	{
@@ -18,6 +19,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 
 		$this->_email  = Kohana::$config->load('email');
 		$this->_config = Kohana::$config->load('user_auth');
+		$this->_referrer = Session::instance()->get('url', Route::url('default', array('lang' => I18n::$lang)));
 	}
 
 	/**
@@ -57,7 +59,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 				$post_data['password'],
 				(bool) $post_data['remember']))
 			{
-				HTTP::redirect(Request::initial()->referrer());
+				HTTP::redirect($this->_referrer);
 			}
 			else
 			{
@@ -140,8 +142,8 @@ abstract class Controller_Core_Auth extends Controller_Template {
 	 */
 	public function action_logout()
 	{
-		if(Auth::instance()->logout())
-			HTTP::redirect('');
+		Auth::instance()->logout();
+		HTTP::redirect($this->_referrer);
 	}
 
 	/**
