@@ -59,6 +59,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 				$post_data['password'],
 				(bool) $post_data['remember']))
 			{
+				Session::instance()->delete('url');
 				HTTP::redirect($this->_referrer);
 			}
 			else
@@ -72,11 +73,14 @@ abstract class Controller_Core_Auth extends Controller_Template {
 		StaticJs::instance()->add_modpath('js/auth.js');
 		$this->template->modals .= View::factory('frontend/modal/auth/remember');
 		$this->template->modals .= View::factory('frontend/modal/auth/passEmailSend');
+		// это может быть редирект с другой страницы - надо залогиниться
+		$reason = Session::instance()->get_once('login_reason');
 
 		$this->template->title      = __('Авторизация');
 		$this->template->content    = View::factory('frontend/form/auth/login')
 			->bind('registration', $registration)
 			->bind('post', $post)
+			->bind('reason', $reason)
 			->bind('errors', $errors)
 			->set('can_remember', $this->_config->remember_functional)
 		;
@@ -143,6 +147,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 	public function action_logout()
 	{
 		Auth::instance()->logout();
+		Session::instance()->delete('url');
 		HTTP::redirect($this->_referrer);
 	}
 
