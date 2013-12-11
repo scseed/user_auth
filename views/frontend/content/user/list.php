@@ -40,7 +40,7 @@
 	<?php foreach($users as $user):
 		$status = ($user->is_active) ? __('активен') : __('отключён');
 		$status_action = ($user->is_active) ? __('Отключить') : __('Включить');
-		$status_icon   = ($user->is_active) ? 'ok-sign' : 'ban-circle';
+		$status_icon   = ($user->is_active) ? 'ok-sign' : 'ban';
 		$status_color  = ($user->is_active) ? 'green' : 'red';
 		$status_icon_change = ( ! $user->is_active) ? 'ok-sign' : 'ban-circle';
 		?>
