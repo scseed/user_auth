@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS `user_data` (
 CREATE TABLE IF NOT EXISTS `hashes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `object` varchar(128) NOT NULL,
-  `object_id` int(10) unsigned NOT NULL,
+  `object_id` varchar(254) NOT NULL,
+  `object_params` text,
   `hash` varchar(256) NOT NULL,
   `date_valid_end` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),

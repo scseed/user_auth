@@ -1,5 +1,10 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');?>
-<div class="row-fluid" style="margin: 5em auto">
+<?php if (isset($reason) && !empty($reason)): ?>
+	<div class="alert alert-notice">
+		<?php echo $reason ?>
+	</div>
+<?php endif ?>
+<div class="row-fluid" style="margin: 2em auto">
 	<div class="span3">&nbsp;</div>
 	<div class="span6">
 	<?php echo Form::open(Route::url('auth', array('action' => 'login', 'lang' => $lang)), array('class' => 'form-horizontal')); ?>

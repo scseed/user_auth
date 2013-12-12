@@ -11,6 +11,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 	protected $_email         = NULL;
 	protected $_config        = NULL;
 	protected $_auth_required = FALSE;
+	protected $_referrer      = NULL;
 
 	public function before()
 	{
@@ -18,6 +19,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 
 		$this->_email  = Kohana::$config->load('email');
 		$this->_config = Kohana::$config->load('user_auth');
+		$this->_referrer = Session::instance()->get('url', Route::url('default', array('lang' => I18n::$lang)));
 	}
 
 	/**
@@ -37,7 +39,7 @@ abstract class Controller_Core_Auth extends Controller_Template {
 	 */
 	public function action_login()
 	{
-//		$registration = $this->_config->open_registration;
+		$registration = $this->_config->open_registration;
 		if(Auth::instance()->logged_in())
 			HTTP::redirect();
 
@@ -57,7 +59,8 @@ abstract class Controller_Core_Auth extends Controller_Template {
 				$post_data['password'],
 				(bool) $post_data['remember']))
 			{
-				HTTP::redirect(Request::initial()->referrer());
+				Session::instance()->delete('url');
+				HTTP::redirect($this->_referrer);
 			}
 			else
 			{
@@ -70,13 +73,16 @@ abstract class Controller_Core_Auth extends Controller_Template {
 		StaticJs::instance()->add_modpath('js/auth.js');
 		$this->template->modals .= View::factory('frontend/modal/auth/remember');
 		$this->template->modals .= View::factory('frontend/modal/auth/passEmailSend');
+		// это может быть редирект с другой страницы - надо залогиниться
+		$reason = Session::instance()->get_once('login_reason');
 
 		$this->template->title      = __('Авторизация');
 		$this->template->content    = View::factory('frontend/form/auth/login')
-//			->bind('registration', $registration)
+			->bind('registration', $registration)
 			->bind('post', $post)
+			->bind('reason', $reason)
 			->bind('errors', $errors)
-//			->set('can_remember', $this->_config->remember_functional)
+			->set('can_remember', $this->_config->remember_functional)
 		;
 	}
 
@@ -140,8 +146,9 @@ abstract class Controller_Core_Auth extends Controller_Template {
 	 */
 	public function action_logout()
 	{
-		if(Auth::instance()->logout())
-			HTTP::redirect('');
+		Auth::instance()->logout();
+		Session::instance()->delete('url');
+		HTTP::redirect($this->_referrer);
 	}
 
 	/**
