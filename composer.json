@@ -1,0 +1,12 @@
+{
+    "name": "scseed/user_auth",
+    "description": "Authorization/registration routines",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "SMGladkovskiy",
+            "email": "smgladkovskiy@gmail.com"
+        }
+    ],
+    "require": {}
+}
